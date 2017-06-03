@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Spiritual Chanting", ".", "{B916B971-45F8-493D-B8CF-021E8791564B}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_36414"
+		Debug.AspNetCompiler.PhysicalPath = "..\Spiritual Chanting\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_36414\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_36414"
+		Release.AspNetCompiler.PhysicalPath = "..\Spiritual Chanting\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_36414\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "36414"
+		SlnRelativePath = "..\Spiritual Chanting\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B916B971-45F8-493D-B8CF-021E8791564B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B916B971-45F8-493D-B8CF-021E8791564B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
