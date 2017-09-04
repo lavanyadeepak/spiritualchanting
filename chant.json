@@ -106,5 +106,9 @@
   {
     "chantname": "Neelanchana (Shani Sloka)",
 	"chanturl": "./chants/neelanchana.mp3"
-  }
+  },
+  {
+    "chantname": "Om Sham Shanaiswaraya Namaha",
+	"chanturl": "./chants/omsham.mp3"
+  }  
 ] }
