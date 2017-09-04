@@ -1,4 +1,4 @@
-{"chant": [
+var chantJson = {"chant": [
   {
     "chantname": "AIM",
     "chanturl": "./chants/aim.mp3"
@@ -111,4 +111,4 @@
     "chantname": "Om Sham Shanaiswaraya Namaha",
 	"chanturl": "./chants/omsham.mp3"
   }  
-] }
+] };
