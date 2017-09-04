@@ -1,0 +1,110 @@
+{"chant": [
+  {
+    "chantname": "AIM",
+    "chanturl": "./chants/aim.mp3"
+  },
+  {
+    "chantname": "Adityahrudayam",
+    "chanturl":  "./chants/aadityahrudayam.mp3"
+  },
+  {
+    "chantname": "Durga Devyai Namaha. Om Namaha Shivaya",
+    "chanturl": "./chants/durgadevyainamaha_omnamahshivaya.mp3"
+  },
+  {
+    "chantname": "Gum",
+    "chanturl": "./chants/gam.mp3"
+  },
+  {
+    "chantname": "Ohm Gum Ganapathaye Namaha",
+    "chanturl": "./chants/ganeshayanamaha.mp3"
+  },
+  {
+    "chantname": "Dvayam",
+    "chanturl": "./chants/dvayam.mp3"
+  },
+  {
+    "chantname": "Ham",
+    "chanturl": "./chants/ham.mp3"
+  },
+  {
+    "chantname": "Om Hum Hanumathe Namaha",
+    "chanturl": "./chants/hanumate.mp3"
+  },
+ { 
+    "chantname": "Hanuman Mantra",
+    "chanturl": "./chants/hanuman_mantra.mp3"
+  },
+  {
+    "chantname": "Hraam",
+    "chanturl": "./chants/hraam.mp3"
+  },
+  {
+    "chantname": "Hrim",
+    "chanturl": "./chants/hrim.mp3"
+  },
+  {
+    "chantname": "Hrim",
+    "chanturl": "./chants/hrim.mp3"
+  },
+  {
+    "chantname": "Hroum",
+    "chanturl": "./chants/hroum.mp3"
+  },
+  {
+    "chantname": "Hrim",
+    "chanturl": "./chants/hrim.mp3"
+  },
+  {
+    "chantname": "Hrum",
+    "chanturl": "./chants/hrum.mp3"
+  },
+  {
+    "chantname": "Klim",
+    "chanturl": "./chants/klim.mp3"
+  },
+  {
+    "chantname": "Om",
+    "chanturl": "./chants/om.mp3"
+  },
+  {
+    "chantname": "Om Nama Shivaya",
+    "chanturl": "./chants/omnamashivaya.mp3"
+  },
+  {
+    "chantname": "Om Namo Bhagavathe Vasudevaya",
+    "chanturl": "./chants/omnamobhagavatevasudevaya.mp3"
+  },
+  {
+    "chantname": "Sham",
+    "chanturl": "./chants/sham.mp3"
+  },
+  {
+    "chantname": "Shree Ram Jayaram Jay Jay Ram",
+    "chanturl": "./chants/shreeram.mp3"
+  },
+  {
+    "chantname": "Shree Gurudev Datta",
+    "chanturl": "./chants/sridatta.mp3"
+  },
+  {
+    "chantname": "Prayer for Rain",
+    "chanturl": "./chants/varuna.mp3"
+  },
+  {
+    "chantname": "Sri Vishnu Sahasranamam",
+    "chanturl": "./chants/svfull.mp3"
+  },
+  {
+    "chantname": "Sri Vishnu Sahasranamam (Swathi) Chanting",
+    "chanturl": "./chants/sv.mp3"
+  },
+  {
+    "chantname": "Om Triambakam",
+    "chanturl": "./chants/triambakam.mp3"
+  },
+  {
+    "chantname": "Neelanchana (Shani Sloka)",
+	"chanturl": "./chants/neelanchana.mp3"
+  }
+] }
