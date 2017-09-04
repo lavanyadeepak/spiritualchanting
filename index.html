@@ -145,6 +145,7 @@
 			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
 			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="./chant.json"></script>
 			<script type="text/javascript">
                 var chantLimit = 0;
                 var chantCount = 0;
@@ -154,12 +155,14 @@
 			   $(function (){
 			   
 			   	my_jPlayer = $("#jquery_jplayer");
+				
+				chantJson.chant = _.sortBy(chantJson.chant, "chantname");
+				
+				for (var i in chantJson.chant) {
+					$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+				}
 
-			   	//$('#txtCount').spinner({ min: 1, max: 1008 });
-
-			       //sortResults(chantJson.chant, "chantname", "asc");
-
-			   	$.ajax({
+			   	/*$.ajax({
 			   	    dataType: "json",
 			   	    url: "chant.json",
 			   	    success: function (result) {
@@ -174,6 +177,7 @@
 			   	        }
 			   	    }
 			   	});
+				*/
 				  
 	            // Some options
 	            var	opt_play_first = false, // If true, will attempt to auto-play the default track on page loads. No effect on mobile devices, like iOS.
