@@ -110,5 +110,9 @@ var chantJson = {"chant": [
   {
     "chantname": "Om Sham Shanaiswaraya Namaha",
 	"chanturl": "./chants/omsham.mp3"
+  },
+  {
+    "chantname": "Om Namo Venkatesaya Namaha",
+	"chanturl": "./chants/omnamovenkatesaya.mp3"
   }  
 ] };
