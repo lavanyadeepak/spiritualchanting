@@ -147,6 +147,7 @@
 			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 			<script src="assets/js/main.js"></script>
 			<script type="text/javascript" src="./scripts/jquery.jplayer.min.js"></script>
+			<script type="text/javascript" src="./scripts/jplayer.playlist.min.js"></script>
 			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
 			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
@@ -156,6 +157,11 @@
                 var chantCount = 0;
                 var my_jPlayer;
                 var chantJson;
+				
+				var intPlayListCount = 0;
+				var intCurrentPlay = 0;
+				
+				var myPlaylist;
 
 			   $(function (){
 			   
@@ -208,39 +214,70 @@
 		
 		            },
 		            play: function(event) {
-		
+					   FormatText();
+					   intCurrentPlay++;
 		            },
 		            pause: function(event) {
 		
 		            },
 		            ended: function(event) {
-		               if (chantCount < chantLimit)
-		               {
-				            my_jPlayer.jPlayer("play");		   
-				            FormatText();
-		               }		   	
-		               else
-		               {
-		                  chantLimit = 0;
-			              chantCount = 0;
-			              $("#btnSubmit").css("display","block");
-			              
-			              chantLimit = $('#txtCount').val(1);
-			              var dtNow = new Date();
-			              $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
-			              $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
-			              $("#spnStopTime").css("display", "block");
+					    if ($("#hidModeOfProcessing").val() == "Normal")
+						{
+								if (chantCount < chantLimit)
+							   {
+									my_jPlayer.jPlayer("play");		   
+									FormatText();
+							   }		   	
+							   else
+							   {
+								  chantLimit = 0;
+								  chantCount = 0;
+								  $("#btnSubmit").css("display","block");
+								  
+								  chantLimit = $('#txtCount').val(1);
+								  var dtNow = new Date();
+								  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
+								  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
+								  $("#spnStopTime").css("display", "block");
+								  
+								  intPlayListCount = 0;
+								  intCurrentPlay = 0;
 
-			              setTimeout(function () {
-			                  $("#diveJapaMala").html("");
-			                  $("#spnStopTime").css("display", "none");
-			                  $.unblockUI();
-			              }, 4000);
-			  
-			              
-		               }
+								  setTimeout(function () {
+									  $("#diveJapaMala").html("");
+									  $("#spnStopTime").css("display", "none");
+									  $.unblockUI();
+									  $("#btnSubmit").css("display","block");
+								  }, 4000);
+					  
+								  
+							   }
+						}
+						else if ($("#hidModeOfProcessing").val() == "Special")
+						{
+						    if (intPlayListCount == intCurrentPlay)
+							{
+								var dtNow = new Date();
+									  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
+									  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
+									  $("#spnStopTime").css("display", "block");
+									  
+										intPlayListCount = 0;
+										intCurrentPlay = 0;
+
+									  setTimeout(function () {
+										  $("#diveJapaMala").html("");
+										  $("#spnStopTime").css("display", "none");
+										  $.unblockUI();
+										  $("#btnSubmit").css("display","block");
+									  }, 4000);
+							}
+						}
 		            },
 		            error: function (event) {
+						intPlayListCount = 0;
+						intCurrentPlay = 0;					
+					    $("#btnSubmit").css("display","block");
 		                $.unblockUI();
 		            },
 		            swfPath: "./scripts/",
@@ -253,31 +290,97 @@
 	
 	            $("#btnSubmit").click (function()
 	            {
-	                    $("#btnSubmit").css("display","none");
-	    	            DoChanting();
-	    	            var dtNow = new Date();
-	    	            $.blockUI({
-	    	                message: $("#divTime")
-	    	            })
-			            $("#divTime").css("display","block");
-			            $("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+	                    DoChanting();
 	            });
 	
 			});
 			   
 function DoChanting()
 {
-    console.log(my_jPlayer);
-	my_jPlayer.jPlayer("setMedia", {mp3: $("#drpChant").val()});    
-	chantLimit = $('#txtCount').val();
-	FormatText();
-	my_jPlayer.jPlayer("play");
+    var strMp3 = $("#drpChant").val();
+	$("#hidModeOfProcessing").val( (strMp3.indexOf("SPECIALPROCESSING") < 0) ? "Normal":"Special");
+	if (strMp3.indexOf("SPECIALPROCESSING") < 0)
+	{
+		$("#btnSubmit").css("display","none");
+		my_jPlayer.jPlayer("setMedia", {mp3: strMp3});    
+		chantLimit = $('#txtCount').val();
+		FormatText();
+		my_jPlayer.jPlayer("play");
+		
+		var dtNow = new Date();
+		$.blockUI({
+			message: $("#divTime")
+		})
+		$("#divTime").css("display","block");
+		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+	}
+	else 
+	{
+		var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
+		
+	   	myPlaylist = new jPlayerPlaylist({
+		jPlayer: "#jquery_jplayer"
+	},{
+		swfPath: "./scripts/",
+		supplied: "webmv, ogv, m4v, oga, mp3",
+		playlistOptions: {
+			  autoPlay: false,
+			  loopOnPrevious: false,
+			  shuffleOnLoop: true,
+			  enableRemoveControls: false,
+			  displayTime: 'slow',
+			  addTime: 'fast',
+			  removeTime: 'fast',
+			  shuffleTime: 'slow'
+		}
+	});
+	
+	   var arrPlayList = (urlParts+"").split(',');
+	   
+	   for (var j in arrPlayList)
+	   {
+	       var mp3URLComponent = arrPlayList[j];
+		   var mp3Parts = (mp3URLComponent+"").split(':');
+		   
+		   if (isNaN(mp3Parts[1]))
+		      mp3Parts[1] = $('#txtCount').val();
+
+		  for (var i=0;i<mp3Parts[1];i++)
+		   {
+		           intPlayListCount++;
+		   	   	   myPlaylist.add({
+			         mp3:mp3Parts[0]
+	               });
+		   }
+   	   }
+
+	   $("#btnSubmit").css("display","none");
+	   var dtNow = new Date();
+		$.blockUI({
+			message: $("#divTime")
+		})
+		$("#divTime").css("display","block");
+		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+		
+		console.log (myPlaylist);
+		
+        myPlaylist.play();
+   }
 }
 
-function FormatText()
+
+function FormatText(strText)
 {
-    var strText = "Chanting " + $("#drpChant option:selected").text() +" " +((chantCount++) + 1) + " of " + chantLimit + " time(s)";
-    $("#diveJapaMala").text(strText);
+    if ($("#hidModeOfProcessing").val() == "Special")
+	{
+	   strText = "Chanting " + ($("#drpChant option:selected").text()+"").substring(0,($("#drpChant option:selected").text()+"").indexOf("(")-1);
+	}
+	else 
+	{
+		strText = "Chanting " + $("#drpChant option:selected").text() +" " +((chantCount++)) + " of " + chantLimit + " time(s)";
+	}
+	
+	$("#diveJapaMala").text(strText);
 }
 
 </script>
@@ -296,5 +399,7 @@ function FormatText()
   })();
 
 </script>
-	<div style='text-align: right;position: fixed;z-index:9999999;bottom: 0; width: 100%;cursor: pointer;line-height: 0;'><a title="Hosted on free web hosting 000webhost.com. Host your own website for FREE." target="_blank" href="https://www.000webhost.com/?utm_source=000webhostapp&utm_campaign=000_logo&utm_medium=website_lavanyadeepak&utm_content=footer_img"><img src="https://cloud.githubusercontent.com/assets/23024110/20663010/9968df22-b55e-11e6-941d-edbc894c2b78.png"  alt="www.000webhost.com"></a></div></body>
+
+<input type="hidden" id="hidModeOfProcessing" name="hidModeOfProcessing">
+</body>
 </html>
