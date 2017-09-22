@@ -96,6 +96,10 @@ var chantJson = {"chant": [
     "chanturl": "./chants/srivishnusahasranamam.mp3"
   },
   {
+    "chantname": "Sri Vishnu Sahasranamam (Repeat)",
+    "chanturl": "SPECIALPROCESSING_./chants/sv_dhyanam:1,./chants/sv_core:n,./chants/sv_palashruti:1"
+  },  
+  {
     "chantname": "Sri Vishnu Sahasranamam (Swathi) Chanting",
     "chanturl": "./chants/sv.mp3"
   },
