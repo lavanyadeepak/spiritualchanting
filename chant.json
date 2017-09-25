@@ -84,6 +84,10 @@ var chantJson = {"chant": [
     "chanturl": "./chants/shreeram.mp3"
   },
   {
+     "chantname": "Sree Annapoorna Stotram",
+	 "chanturl": "./chants/annapoornastotram.mp3"
+  },
+  {
     "chantname": "Shree Gurudev Datta",
     "chanturl": "./chants/sridatta.mp3"
   },
