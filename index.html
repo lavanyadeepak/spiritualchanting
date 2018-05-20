@@ -72,6 +72,7 @@
                                             <div id="diveJapaMala"></div><br />
 										    <b>Start Time:</b> <span id="divTimeStart"></span><br>
 										    <span id="spnStopTime" style="display:none;"><b>Stop Time:</b> <span id="divTimeStop"></span></span>
+											<span id="spnPhoneMode">To Phone</span> | <span id="spnMute">Mute</span>
 										</div>
 										
 										<br><br>
@@ -214,20 +215,19 @@
 		            timeupdate: function(event) {
 		
 		            },
-		            play: function(event) {
-					   FormatText();
-					   intCurrentPlay++;
+		            play: function(event) {					   
+						   FormatText();
+						   intCurrentPlay++;					      
 		            },
 		            pause: function(event) {
-		
 		            },
 		            ended: function(event) {
 					    if ($("#hidModeOfProcessing").val() == "Normal")
 						{
-								if (chantCount < chantLimit)
+						     	if (chantCount <= chantLimit)
 							   {
 									my_jPlayer.jPlayer("play");		   
-									FormatText();
+									//FormatText();
 							   }		   	
 							   else
 							   {
@@ -293,31 +293,58 @@
 	            {
 	                    DoChanting();
 	            });
+				
+				$("#spnPhoneMode").click(function()
+				{
+				   var strCurrently = $("#spnPhoneMode").text();
+				   if (strCurrently	 == "To Phone")
+				   {
+				      my_jPlayer.jPlayer("volume",0.1);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"1px", 
+										 "border-style":"solid"});
+					  $("#spnPhoneMode").text("To Audio");
+				   }
+				   else if (strCurrently == "To Audio")
+				   {
+				      my_jPlayer.jPlayer("volume",0.7);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"0px", 
+										 "border-style":"none"});					  
+					  $("#spnPhoneMode").text("To Phone");
+				   }
+				});
+				
+				$("#spnMute").click(function ()
+				{
+				   var strCurrently = $("#spnMute").text();
+				   if (strCurrently	 == "Mute")
+				      {
+						  my_jPlayer.jPlayer("mute");
+						  $("#spnMute").text("Unmute");					  
+					  }
+				   else if (strCurrently == "Unmute")		 
+				   {
+						  my_jPlayer.jPlayer("unmute");
+						  $("#spnMute").text("Mute");					  				   
+				   }
+				});
 	
 			});
+			   
+String.prototype.repeat= function(n){
+    n= n || 1;
+    return Array(n+1).join(this);
+}
 			   
 function DoChanting()
 {
     var strMp3 = $("#drpChant").val();
-	$("#hidModeOfProcessing").val( (strMp3.indexOf("SPECIALPROCESSING") < 0) ? "Normal":"Special");
-	if (strMp3.indexOf("SPECIALPROCESSING") < 0)
+	$("#hidModeOfProcessing").val( (strMp3.indexOf("SPECIALPROCESSING") >-1 || strMp3.indexOf("BUILD") > -1 ) ? "Special":"Normal");
+	if (strMp3.indexOf("SPECIALPROCESSING") > -1)
 	{
-		$("#btnSubmit").css("display","none");
-		my_jPlayer.jPlayer("setMedia", {mp3: strMp3});    
-		chantLimit = $('#txtCount').val();
-		FormatText();
-		my_jPlayer.jPlayer("play");
-		
-		var dtNow = new Date();
-		$.blockUI({
-			message: $("#divTime")
-		})
-		$("#divTime").css("display","block");
-		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
-	}
-	else 
-	{
-		var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
+	
+			var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
 		
 	   	myPlaylist = new jPlayerPlaylist({
 		jPlayer: "#jquery_jplayer"
@@ -366,7 +393,82 @@ function DoChanting()
 		console.log (myPlaylist);
 		
         myPlaylist.play();
-   }
+	}
+	else if (strMp3.indexOf("BUILD") > -1)
+	{
+	   var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
+	   
+	   var urlSegments = urlParts.split('_');
+	   var path = urlSegments[1];
+	   var trailingfilename = urlSegments[4];
+	   var starting = urlSegments[2];
+	   var ending = urlSegments[3];
+	   
+		myPlaylist = new jPlayerPlaylist({
+			jPlayer: "#jquery_jplayer"
+		},{
+			swfPath: "./scripts/",
+			supplied: "webmv, ogv, m4v, oga, mp3",
+			playlistOptions: {
+				  autoPlay: false,
+				  loopOnPrevious: false,
+				  shuffleOnLoop: true,
+				  enableRemoveControls: false,
+				  displayTime: 'slow',
+				  addTime: 'fast',
+				  removeTime: 'fast',
+				  shuffleTime: 'slow'
+			}
+		});
+	   
+	   switch (urlSegments[0])
+	   {
+	      case "Narayaneeyam":
+		        var lengthofending = (""+ending).length;
+				for (var j=starting;j<=ending;j++)
+				{
+				   var fileName = "";
+				   if ((""+j).length != lengthofending)
+				   {
+				      var difference = lengthofending - (""+j).length;
+					  var prepend0="0".repeat(difference)+(""+j);	
+					  fileName = path+prepend0+trailingfilename;
+				   }
+				   else 
+				      fileName = path +j+trailingfilename;
+					  
+  		   	   	   myPlaylist.add({
+			         mp3:fileName
+	               });
+				   
+				   $("#btnSubmit").css("display","none");
+				   var dtNow = new Date();
+					$.blockUI({
+						message: $("#divTime")
+					})
+					$("#divTime").css("display","block");
+					$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+
+					myPlaylist.play();
+				}
+		        break;
+	   }
+	}
+	else 
+	{
+		$("#btnSubmit").css("display","none");
+		my_jPlayer.jPlayer("setMedia", {mp3: strMp3});    
+		chantLimit = $('#txtCount').val();
+		FormatText();
+		my_jPlayer.jPlayer("play");
+		
+		var dtNow = new Date();
+		$.blockUI({
+			message: $("#divTime")
+		})
+		$("#divTime").css("display","block");
+		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+    }
 }
 
 
