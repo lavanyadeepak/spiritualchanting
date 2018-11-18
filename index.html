@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <!--
 	Hyperspace by HTML5 UP
 	html5up.net | @ajlkn
@@ -72,6 +72,7 @@
                                             <div id="diveJapaMala"></div><br />
 										    <b>Start Time:</b> <span id="divTimeStart"></span><br>
 										    <span id="spnStopTime" style="display:none;"><b>Stop Time:</b> <span id="divTimeStop"></span></span>
+											<span id="spnPhoneMode">To Phone</span> | <span id="spnMute">Mute</span>
 										</div>
 										
 										<br><br>
@@ -109,8 +110,7 @@
 							<h2>Web Hosting Courtesy</h2>
 							<p>
 							   <Ul>
-                                  <li><a href="http://www.astrovighnesh.com/">Astrologer Vighnesh</a></li>
-                                  <li><a href="http://www.bigsitesindia.com/">BigSitesIndia</a></li>
+                                  <li><a href="http://www.000webhost.com/">000WebHost</a></li>
                                 </Ul>
 							</p>
 							
@@ -118,6 +118,11 @@
 							<p>
 							  SSRF
 							</p>
+
+							<h2>Download Source Code</h2>
+							<p>
+							  You can download the source code of this utility for offline viewing and customization <a href="https://github.com/lavanyadeepak/spiritualchanting">here</a>.
+							</p>							
 						</div>
 					</section>
 
@@ -135,34 +140,56 @@
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="scripts/jquery-migrate-1.4.1.js"></script>
+			<script src="scripts/lodash.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/jquery.scrolly.min.js"></script>
 			<script src="assets/js/skel.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 			<script src="assets/js/main.js"></script>
-			<script src="chant.json"></script>
 			<script type="text/javascript" src="./scripts/jquery.jplayer.min.js"></script>
+			<script type="text/javascript" src="./scripts/jplayer.playlist.min.js"></script>
 			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
 			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="./chant.json"></script>
 			<script type="text/javascript">
                 var chantLimit = 0;
                 var chantCount = 0;
                 var my_jPlayer;
+                var chantJson;
+				
+				var intPlayListCount = 0;
+				var intCurrentPlay = 0;
+				
+				var myPlaylist;
 
 			   $(function (){
 			   
 			   	my_jPlayer = $("#jquery_jplayer");
-
-			   	//$('#txtCount').spinner({ min: 1, max: 1008 });
-
-			   	//sortResults(chantJson.chant, "chantname", "asc");
 				
-			      for (var i in chantJson.chant)
-				  {
-				     $("#drpChant").append("<option value='"+chantJson.chant[i].chanturl+"'>"+chantJson.chant[i].chantname+"</option>");
-				  }
+				chantJson.chant = _.sortBy(chantJson.chant, "chantname");
+				
+				for (var i in chantJson.chant) {
+					$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+				}
+
+			   	/*$.ajax({
+			   	    dataType: "json",
+			   	    url: "chant.json",
+			   	    success: function (result) {
+			   	        
+						chantJson = result;
+						
+						chantJson.chant = _.sortBy(chantJson.chant, "chantname")
+						
+			   	       
+			   	        for (var i in chantJson.chant) {
+			   	            $("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+			   	        }
+			   	    }
+			   	});
+				*/
 				  
 	            // Some options
 	            var	opt_play_first = false, // If true, will attempt to auto-play the default track on page loads. No effect on mobile devices, like iOS.
@@ -182,45 +209,76 @@
 	            // Instance jPlayer
 	            my_jPlayer.jPlayer({
 	                errorAlerts: true,
+					volume: "0.9",
 		            ready: function () {
 		            },
 		            timeupdate: function(event) {
 		
 		            },
-		            play: function(event) {
-		
+		            play: function(event) {					   
+						   FormatText();
+						   intCurrentPlay++;					      
 		            },
 		            pause: function(event) {
-		
 		            },
 		            ended: function(event) {
-		               if (chantCount < chantLimit)
-		               {
-				            my_jPlayer.jPlayer("play");		   
-				            FormatText();
-		               }		   	
-		               else
-		               {
-		                  chantLimit = 0;
-			              chantCount = 0;
-			              $("#btnSubmit").css("display","block");
-			              
-			              chantLimit = $('#txtCount').val(1);
-			              var dtNow = new Date();
-			              $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
-			              $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
-			              $("#spnStopTime").css("display", "block");
+					    if ($("#hidModeOfProcessing").val() == "Normal")
+						{
+						     	if (chantCount <= chantLimit)
+							   {
+									my_jPlayer.jPlayer("play");		   
+									//FormatText();
+							   }		   	
+							   else
+							   {
+								  chantLimit = 0;
+								  chantCount = 0;
+								  $("#btnSubmit").css("display","block");
+								  
+								  chantLimit = $('#txtCount').val(1);
+								  var dtNow = new Date();
+								  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
+								  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
+								  $("#spnStopTime").css("display", "block");
+								  
+								  intPlayListCount = 0;
+								  intCurrentPlay = 0;
 
-			              setTimeout(function () {
-			                  $("#diveJapaMala").html("");
-			                  $("#spnStopTime").css("display", "none");
-			                  $.unblockUI();
-			              }, 4000);
-			  
-			              
-		               }
+								  setTimeout(function () {
+									  $("#diveJapaMala").html("");
+									  $("#spnStopTime").css("display", "none");
+									  $.unblockUI();
+									  $("#btnSubmit").css("display","block");
+								  }, 4000);
+					  
+								  
+							   }
+						}
+						else if ($("#hidModeOfProcessing").val() == "Special")
+						{
+						    if (intPlayListCount == intCurrentPlay)
+							{
+								var dtNow = new Date();
+									  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
+									  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
+									  $("#spnStopTime").css("display", "block");
+									  
+										intPlayListCount = 0;
+										intCurrentPlay = 0;
+
+									  setTimeout(function () {
+										  $("#diveJapaMala").html("");
+										  $("#spnStopTime").css("display", "none");
+										  $.unblockUI();
+										  $("#btnSubmit").css("display","block");
+									  }, 4000);
+							}
+						}
 		            },
 		            error: function (event) {
+						intPlayListCount = 0;
+						intCurrentPlay = 0;					
+					    $("#btnSubmit").css("display","block");
 		                $.unblockUI();
 		            },
 		            swfPath: "./scripts/",
@@ -233,39 +291,201 @@
 	
 	            $("#btnSubmit").click (function()
 	            {
-	                    $("#btnSubmit").css("display","none");
-	    	            DoChanting();
-	    	            var dtNow = new Date();
-	    	            $.blockUI({
-	    	                message: $("#divTime")
-	    	            })
-			            $("#divTime").css("display","block");
-			            $("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+	                    DoChanting();
 	            });
+				
+				$("#spnPhoneMode").click(function()
+				{
+				   var strCurrently = $("#spnPhoneMode").text();
+				   if (strCurrently	 == "To Phone")
+				   {
+				      my_jPlayer.jPlayer("volume",0.1);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"1px", 
+										 "border-style":"solid"});
+					  $("#spnPhoneMode").text("To Audio");
+				   }
+				   else if (strCurrently == "To Audio")
+				   {
+				      my_jPlayer.jPlayer("volume",0.7);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"0px", 
+										 "border-style":"none"});					  
+					  $("#spnPhoneMode").text("To Phone");
+				   }
+				});
+				
+				$("#spnMute").click(function ()
+				{
+				   var strCurrently = $("#spnMute").text();
+				   if (strCurrently	 == "Mute")
+				      {
+						  my_jPlayer.jPlayer("mute");
+						  $("#spnMute").text("Unmute");					  
+					  }
+				   else if (strCurrently == "Unmute")		 
+				   {
+						  my_jPlayer.jPlayer("unmute");
+						  $("#spnMute").text("Mute");					  				   
+				   }
+				});
 	
 			});
 			   
+String.prototype.repeat= function(n){
+    n= n || 1;
+    return Array(n+1).join(this);
+}
+			   
 function DoChanting()
 {
-    console.log(my_jPlayer);
-	my_jPlayer.jPlayer("setMedia", {mp3: $("#drpChant").val()});    
-	chantLimit = $('#txtCount').val();
-	FormatText();
-	my_jPlayer.jPlayer("play");
+    var strMp3 = $("#drpChant").val();
+	$("#hidModeOfProcessing").val( (strMp3.indexOf("SPECIALPROCESSING") >-1 || strMp3.indexOf("BUILD") > -1 ) ? "Special":"Normal");
+	if (strMp3.indexOf("SPECIALPROCESSING") > -1)
+	{
+	
+			var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
+		
+	   	myPlaylist = new jPlayerPlaylist({
+		jPlayer: "#jquery_jplayer"
+	},{
+		swfPath: "./scripts/",
+		supplied: "webmv, ogv, m4v, oga, mp3",
+		playlistOptions: {
+			  autoPlay: false,
+			  loopOnPrevious: false,
+			  shuffleOnLoop: true,
+			  enableRemoveControls: false,
+			  displayTime: 'slow',
+			  addTime: 'fast',
+			  removeTime: 'fast',
+			  shuffleTime: 'slow'
+		}
+	});
+	
+	   var arrPlayList = (urlParts+"").split(',');
+	   
+	   for (var j in arrPlayList)
+	   {
+	       var mp3URLComponent = arrPlayList[j];
+		   var mp3Parts = (mp3URLComponent+"").split(':');
+		   
+		   if (isNaN(mp3Parts[1]))
+		      mp3Parts[1] = $('#txtCount').val();
+
+		  for (var i=0;i<mp3Parts[1];i++)
+		   {
+		           intPlayListCount++;
+		   	   	   myPlaylist.add({
+			         mp3:mp3Parts[0]
+	               });
+		   }
+   	   }
+
+	   $("#btnSubmit").css("display","none");
+	   var dtNow = new Date();
+		$.blockUI({
+			message: $("#divTime")
+		})
+		$("#divTime").css("display","block");
+		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+		
+		console.log (myPlaylist);
+		
+        myPlaylist.play();
+	}
+	else if (strMp3.indexOf("BUILD") > -1)
+	{
+	   var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
+	   
+	   var urlSegments = urlParts.split('_');
+	   var path = urlSegments[1];
+	   var trailingfilename = urlSegments[4];
+	   var starting = urlSegments[2];
+	   var ending = urlSegments[3];
+	   
+		myPlaylist = new jPlayerPlaylist({
+			jPlayer: "#jquery_jplayer"
+		},{
+			swfPath: "./scripts/",
+			supplied: "webmv, ogv, m4v, oga, mp3",
+			playlistOptions: {
+				  autoPlay: false,
+				  loopOnPrevious: false,
+				  shuffleOnLoop: true,
+				  enableRemoveControls: false,
+				  displayTime: 'slow',
+				  addTime: 'fast',
+				  removeTime: 'fast',
+				  shuffleTime: 'slow'
+			}
+		});
+	   
+	   switch (urlSegments[0])
+	   {
+	      case "Narayaneeyam":
+		        var lengthofending = (""+ending).length;
+				for (var j=starting;j<=ending;j++)
+				{
+				   var fileName = "";
+				   if ((""+j).length != lengthofending)
+				   {
+				      var difference = lengthofending - (""+j).length;
+					  var prepend0="0".repeat(difference)+(""+j);	
+					  fileName = path+prepend0+trailingfilename;
+				   }
+				   else 
+				      fileName = path +j+trailingfilename;
+					  
+  		   	   	   myPlaylist.add({
+			         mp3:fileName
+	               });
+				   
+				   $("#btnSubmit").css("display","none");
+				   var dtNow = new Date();
+					$.blockUI({
+						message: $("#divTime")
+					})
+					$("#divTime").css("display","block");
+					$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+
+					myPlaylist.play();
+				}
+		        break;
+	   }
+	}
+	else 
+	{
+		$("#btnSubmit").css("display","none");
+		my_jPlayer.jPlayer("setMedia", {mp3: strMp3});    
+		chantLimit = $('#txtCount').val();
+		FormatText();
+		my_jPlayer.jPlayer("play");
+		
+		var dtNow = new Date();
+		$.blockUI({
+			message: $("#divTime")
+		})
+		$("#divTime").css("display","block");
+		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
+    }
 }
 
-function FormatText()
+
+function FormatText(strText)
 {
-    var strText = "Chanting " + $("#drpChant option:selected").text() +" " +((chantCount++) + 1) + " of " + chantLimit + " time(s)";
-    $("#diveJapaMala").text(strText);
+    if ($("#hidModeOfProcessing").val() == "Special")
+	{
+	   strText = "Chanting " + ($("#drpChant option:selected").text()+"");
+	}
+	else 
+	{
+		strText = "Chanting " + $("#drpChant option:selected").text() +" " +((chantCount++)) + " of " + chantLimit + " time(s)";
+	}
+	
+	$("#diveJapaMala").text(strText);
 }
 
-function sortResults(arr,prop, asc) {
-    arr = arr.sort(function (a, b) {
-        if (asc) return (a[prop] > b[prop]);
-        else return (b[prop] > a[prop]);
-    });
-}
 </script>
 
 			
@@ -282,5 +502,7 @@ function sortResults(arr,prop, asc) {
   })();
 
 </script>
-	</body>
+
+<input type="hidden" id="hidModeOfProcessing" name="hidModeOfProcessing">
+</body>
 </html>
