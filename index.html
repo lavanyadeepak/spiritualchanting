@@ -238,7 +238,7 @@
 								  chantLimit = $('#txtCount').val(1);
 								  var dtNow = new Date();
 								  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
-								  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
+								  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 2 seconds.</span>");
 								  $("#spnStopTime").css("display", "block");
 								  
 								  intPlayListCount = 0;
@@ -249,7 +249,7 @@
 									  $("#spnStopTime").css("display", "none");
 									  $.unblockUI();
 									  $("#btnSubmit").css("display","block");
-								  }, 4000);
+								  }, 2000);
 					  
 								  
 							   }
