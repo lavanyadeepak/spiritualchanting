@@ -4,6 +4,18 @@ var chantJson = {"chant": [
     "chanturl": "./chants/aim.mp3"
   },
   {
+    "chantname": "Kanakadhara",
+    "chanturl": "./chants/kanakadharastotram.mp3"
+  },
+   {
+    "chantname": "Annapoorna",
+    "chanturl": "./chants/annapoornastotram.mp3"
+  },
+   {
+    "chantname": "AIM",
+    "chanturl": "./chants/aim.mp3"
+  },
+  {
     "chantname": "Adityahrudayam",
     "chanturl":   
 	"SPECIALPROCESSING_./chants/aadityahrudayam_dhyanam.mp3:1,./chants/aadityahrudayam_core.mp3:n,./chants/aadityahrudayam_phala.mp3:1"	
@@ -83,10 +95,6 @@ var chantJson = {"chant": [
   {
     "chantname": "Shree Ram Jayaram Jay Jay Ram",
     "chanturl": "./chants/shreeram.mp3"
-  },
-  {
-     "chantname": "Sree Annapoorna Stotram",
-	 "chanturl": "./chants/annapoornastotram.mp3"
   },
   {
     "chantname": "Shree Gurudev Datta",
