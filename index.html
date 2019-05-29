@@ -14,7 +14,9 @@
 		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
 		<link href="./css/jplayer.css" rel="stylesheet" type="text/css" />
-		<link href="./css/jquery-ui-1.8.24.custom.css" rel="stylesheet" type="text/css" />
+		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
+		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
+		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
 
         <style type="text/css">
             select,input, #divTime{
@@ -45,46 +47,32 @@
 				<!-- Intro -->
 					<section id="intro" class="wrapper style1 fullscreen fade-up">
 						<div class="inner">
-									<div id="contact-form" class="clearfix">
-										<label for="name">Chant: </label>
-										<Select Id="drpChant" name="drpChant">
-										  
-										</Select>
-													
-										<br>			
+							<div id="contact-form" class="clearfix">
+									<label for="name">Chant: </label>
+												<Select Id="drpChant" name="drpChant">
+												  
+												</Select>
+												<br>
 										<label for="email">Chant Count</label>
-										<Select Id="intCount" name="intCount" style="display:none;">
-										  <Option Value="1">1</Option>
-										  <Option Value="9">9</Option>
-										  <Option Value="11">11</Option>
-										  <Option Value="27">27</Option>
-										  <Option Value="54">54</Option>
-										  <Option Value="108">108</Option>
-										  <Option Value="1008">1008</Option>
-										</Select>
-					
-                                        
-                                        <input type="number" min="1" max="20" step="1" value="1" id="txtCount" name="txtCount" required>
-			
-										<span id="loading"></span>
-						 
-                                        <div id="divTime" style="display:none;">
-                                            <div id="diveJapaMala"></div><br />
-										    <b>Start Time:</b> <span id="divTimeStart"></span><br>
-										    <span id="spnStopTime" style="display:none;"><b>Stop Time:</b> <span id="divTimeStop"></span></span>
-											<span id="spnPhoneMode">To Phone</span> | <span id="spnMute">Mute</span>
-										</div>
-										
+										<input type="number" min="1" max="20" step="1" value="1" id="txtCount" name="txtCount" required>
+									 
 										<br><br>
-											
-										<input type="button" value="Submit" id="btnSubmit" />
-											
-										</div>
+										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
+										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
+										<input type="button" value="Play" id="btnPlaySelected" />	
+							
+										<div id="divPlayList">
+																			
+								    	</div>
 										
-												<section>
+										<br>
+											<section>
 													<div id="jquery_jplayer"></div>
 													<div id="jplayer_inspector"></div>
-												</section>
+												</section>						
+																				
+							    
+							</div>
 						</div>
 					</section>
 
@@ -137,6 +125,37 @@
 				</div>
 			</footer>
 
+			<div id="dlgProgressIndicator" title="Chanting In Progress">
+			  <table id="tblPlayItem">
+			     <tr>
+				     <td>Selected Chant</td>
+					 <td id="divSelectedChant"></td>
+				 </tr>
+			     <tr>
+				     <td>Chant Composition</td>
+					 <td id="divChantComposition"></td>
+				 </tr>				 
+				<tr>
+				     <td>Current Avruthi</td>
+					 <td id="divCurrentAvruthi"></td>
+				 </tr>
+				 <tr>
+				    <td><span id="spnPhoneMode">To Phone</span></td>
+                    <td><span id="spnMute">Mute</span></td>
+				 </tr>
+				 <tr>
+				    <td colspan="2">
+					      <div class="meter green nostripes"> 
+							<span id="progress" style="width: 0%"></span>
+							<div id="labelProg">0%</div>
+						</div>
+					</td>
+				 </tr>
+			  </table>
+			</div>
+ 
+
+
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="scripts/jquery-migrate-1.4.1.js"></script>
@@ -154,145 +173,196 @@
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
 			<script type="text/javascript" src="./chant.json"></script>
 			<script type="text/javascript">
-                var chantLimit = 0;
-                var chantCount = 0;
-                var my_jPlayer;
-                var chantJson;
+                
+				var arrPlayItem = [];
+				var arrPlayItemChoiceCount = [];
+                var arrMasterPlayList = [];
+				var intCurrentPlayIndex = 0;
+				var my_jPlayer = $("#jquery_jplayer");
+				my_jPlayer.jPlayer("volume",0.7);
+				var	opt_play_first = false, 
+				opt_auto_play = true, 
+				opt_text_playing = 
+				opt_text_selected = "Track selected"; 
+				var isPassiveClose = 0;
 				
-				var intPlayListCount = 0;
-				var intCurrentPlay = 0;
-				
-				var myPlaylist;
+				var first_track = true;
 
-			   $(function (){
-			   
-			   	my_jPlayer = $("#jquery_jplayer");
-				
-				chantJson.chant = _.sortBy(chantJson.chant, "chantname");
-				
-				for (var i in chantJson.chant) {
-					$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
-				}
-
-			   	/*$.ajax({
-			   	    dataType: "json",
-			   	    url: "chant.json",
-			   	    success: function (result) {
-			   	        
-						chantJson = result;
-						
-						chantJson.chant = _.sortBy(chantJson.chant, "chantname")
-						
-			   	       
-			   	        for (var i in chantJson.chant) {
-			   	            $("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
-			   	        }
-			   	    }
-			   	});
-				*/
-				  
-	            // Some options
-	            var	opt_play_first = false, // If true, will attempt to auto-play the default track on page loads. No effect on mobile devices, like iOS.
-		            opt_auto_play = true, // If true, when a track is selected, it will auto-play.
-		            opt_text_playing = "Now playing", // Text when playing
-		            opt_text_selected = "Track selected"; // Text when not playing
-
-	            // A flag to capture the first track
-	            var first_track = true;
-
-	            // Change the time format
-	            $.jPlayer.timeFormat.padMin = false;
-	            $.jPlayer.timeFormat.padSec = false;
-	            $.jPlayer.timeFormat.sepMin = " min ";
-	            $.jPlayer.timeFormat.sepSec = " sec";
-
-	            // Instance jPlayer
-	            my_jPlayer.jPlayer({
-	                errorAlerts: true,
-					volume: "0.9",
-		            ready: function () {
-		            },
-		            timeupdate: function(event) {
-		
-		            },
-		            play: function(event) {					   
-						   FormatText();
-						   intCurrentPlay++;					      
-		            },
-		            pause: function(event) {
-		            },
-		            ended: function(event) {
-					    if ($("#hidModeOfProcessing").val() == "Normal")
-						{
-						     	if (chantCount <= chantLimit)
-							   {
-									my_jPlayer.jPlayer("play");		   
-									//FormatText();
-							   }		   	
-							   else
-							   {
-								  chantLimit = 0;
-								  chantCount = 0;
-								  $("#btnSubmit").css("display","block");
-								  
-								  chantLimit = $('#txtCount').val(1);
-								  var dtNow = new Date();
-								  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
-								  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 2 seconds.</span>");
-								  $("#spnStopTime").css("display", "block");
-								  
-								  intPlayListCount = 0;
-								  intCurrentPlay = 0;
-
-								  setTimeout(function () {
-									  $("#diveJapaMala").html("");
-									  $("#spnStopTime").css("display", "none");
-									  $.unblockUI();
-									  $("#btnSubmit").css("display","block");
-								  }, 2000);
-					  
-								  
-							   }
-						}
-						else if ($("#hidModeOfProcessing").val() == "Special")
-						{
-						    if (intPlayListCount == intCurrentPlay)
+				$.jPlayer.timeFormat.padMin = false;
+				$.jPlayer.timeFormat.padSec = false;
+				$.jPlayer.timeFormat.sepMin = " min ";
+				$.jPlayer.timeFormat.sepSec = " sec";
+					
+					my_jPlayer.jPlayer({
+						errorAlerts: true,
+						volume: "1",
+						ready: function () {
+						},
+						timeupdate: function(event) {
+			
+						},
+						play: function(event) {						      
+						   DisplayProgress();
+     					},
+						pause: function(event) {
+						},
+						ended: function(event) {
+							intCurrentPlayIndex++;
+							if (intCurrentPlayIndex < arrMasterPlayList.length)
 							{
-								var dtNow = new Date();
-									  $("#divTimeStop").html(dtNow.getHours() + ":" + dtNow.getMinutes() + ":" + dtNow.getSeconds());
-									  $("#diveJapaMala").html("Thank you for chanting. <br><br><span style='font-size:9px'>This window will auto-close in 4 seconds.</span>");
-									  $("#spnStopTime").css("display", "block");
-									  
-										intPlayListCount = 0;
-										intCurrentPlay = 0;
-
-									  setTimeout(function () {
-										  $("#diveJapaMala").html("");
-										  $("#spnStopTime").css("display", "none");
-										  $.unblockUI();
-										  $("#btnSubmit").css("display","block");
-									  }, 4000);
+								$("#divSelectedChant").html($("#drpChant option:selected").text());
+								$("#divChantComposition").html(GetPlayItemHTML());
+								$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+				
+							   my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+							   my_jPlayer.jPlayer("play");
+							}
+							else 
+							{
+							   isPassiveClose = 1;
+							   $("#dlgProgressIndicator").dialog("close");
+							   ResetState();
+							}
+						},
+						error: function (event) {
+							
+						},
+							swfPath: "./scripts/",
+							cssSelectorAncestor: "#jp_container",
+							supplied: "mp3",
+							wmode: "window"
+					});
+				
+				$("#btnAddToPlayList").bind("click", function (){
+				   var strCurrentItem = $("#drpChant").val();
+				   if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
+				   {
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrItems = strCurrentItem.split(",");
+					  for (var i=0;i<arrItems.length;i++)
+					  {
+							var eachItem = arrItems[i].split(":");
+							var iteratorValue = eachItem[1] == "n"?$("#txtCount").val():eachItem[1];
+							arrPlayItem.push(eachItem[0]);
+							arrPlayItemChoiceCount.push(iteratorValue);	
+					  }
+				   }
+				   else if (strCurrentItem.indexOf("BUILD_") > -1) 
+				   {
+				      alert ('Available in next version');
+				      /*
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrPlayComponents = strCurrentItem.split("_");
+					  
+					  for (var i=arrPlayComponents[1];i<arrPlayComponents[2];i++)
+					  {
+					     var strPlayItem = arrPlayComponents[0]+arrPlayComponents[3]+arrPlayComponents[i];
+						 console.log (strPlayItem);
+					  }
+					  */
+					  //0 Path 1 2 lbound ubound 3 filename.mp3
+				   }
+				   else 
+				   {
+				      arrPlayItem.push($("#drpChant").val());
+					  arrPlayItemChoiceCount.push($("#txtCount").val());
+				   }
+				});
+				
+				$("#btnResetPlaylist").bind("click", function (){
+				   arrPlayItem = [];
+				   arrPlayItemChoiceCount = [];
+				   arrMasterPlayList = [];
+				});
+				
+				$("#btnPlaySelected").bind("click", function(){
+	                if (arrPlayItem.length < 1)
+					{
+					   alert ("Please add a few items into playlist to proceed");
+					}					
+					else 
+					{
+					   for (var i=0;i<arrPlayItem.length;i++)
+						{
+							if (arrPlayItem[i].length < 1)
+							   continue;
+							else 
+							{
+							   for (var j=0;j<arrPlayItemChoiceCount[i];j++)
+							   {
+								  arrMasterPlayList.push(arrPlayItem[i]);
+							   }
 							}
 						}
-		            },
-		            error: function (event) {
-						intPlayListCount = 0;
-						intCurrentPlay = 0;					
-					    $("#btnSubmit").css("display","block");
-		                $.unblockUI();
-		            },
-		            swfPath: "./scripts/",
-		            cssSelectorAncestor: "#jp_container",
-		            supplied: "mp3",
-		            wmode: "window"
-	            });
+						
+						$("#divSelectedChant").html($("#drpChant option:selected").text());
+						$("#divChantComposition").html(GetPlayItemHTML());
+						$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+						
+						$("#dlgProgressIndicator").dialog("open");
+						my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+						DisplayProgress();
+						my_jPlayer.jPlayer("play");
+					}
+				});
+				
+				function ResetState()
+				{
+					 my_jPlayer.jPlayer("stop");
+				     $("#btnResetPlaylist").trigger("click");
+					 isPassiveClose = 0;
+                     intCurrentPlayIndex =0;
+				}
+				
+				function DisplayProgress()
+				{
+				    var percentage = 0;
+					percentage = Math.round((intCurrentPlayIndex/arrMasterPlayList.length)*100);
+					$("#progress").css('background', 'green');
+					$("#progress").css("width", percentage + "%");
+					$("#labelProg").text(percentage + "%");
+				}
+				
+				function GetPlayItemHTML()
+				{
+				   var strHTML = "<table>";
+				   strHTML += "<tr><td>Play Item</td><td>Repeat Count</td></tr>";
+				   for (var i=0;i<arrPlayItem.length;i++)
+				   {
+				      strHTML += "<tr>";
+					  strHTML += "<td>" + arrPlayItem[i] + " </td><td> "+ arrPlayItemChoiceCount[i]+"</td>";
+					  strHTML += "</tr>";
+				   }
+				   strHTML += "</table>";
+				   return (strHTML);
+				}
 
-	            //$("#jplayer_inspector").jPlayerInspector({jPlayer:$("#jquery_jplayer")});
-	
-	            $("#btnSubmit").click (function()
-	            {
-	                    DoChanting();
-	            });
+			   $(function (){
+					$("#dlgProgressIndicator").dialog({
+					     autoOpen: false,
+						 modal:true,
+						 resizable:false,
+						 width:'auto',
+						    beforeClose: function(){
+							 if (isPassiveClose == 1)
+							 {
+							    return (true);
+							 }
+							 else 
+							 {
+							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
+							     return (true);
+							 else 
+							     return (false);
+							 }
+						 }
+					});
+					
+					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
+					
+					for (var i in chantJson.chant) {
+						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+					}
 				
 				$("#spnPhoneMode").click(function()
 				{
@@ -336,159 +406,8 @@ String.prototype.repeat= function(n){
     n= n || 1;
     return Array(n+1).join(this);
 }
-			   
-function DoChanting()
-{
-    var strMp3 = $("#drpChant").val();
-	$("#hidModeOfProcessing").val( (strMp3.indexOf("SPECIALPROCESSING") >-1 || strMp3.indexOf("BUILD") > -1 ) ? "Special":"Normal");
-	if (strMp3.indexOf("SPECIALPROCESSING") > -1)
-	{
-	
-			var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
-		
-	   	myPlaylist = new jPlayerPlaylist({
-		jPlayer: "#jquery_jplayer"
-	},{
-		swfPath: "./scripts/",
-		supplied: "webmv, ogv, m4v, oga, mp3",
-		playlistOptions: {
-			  autoPlay: false,
-			  loopOnPrevious: false,
-			  shuffleOnLoop: true,
-			  enableRemoveControls: false,
-			  displayTime: 'slow',
-			  addTime: 'fast',
-			  removeTime: 'fast',
-			  shuffleTime: 'slow'
-		}
-	});
-	
-	   var arrPlayList = (urlParts+"").split(',');
-	   
-	   for (var j in arrPlayList)
-	   {
-	       var mp3URLComponent = arrPlayList[j];
-		   var mp3Parts = (mp3URLComponent+"").split(':');
-		   
-		   if (isNaN(mp3Parts[1]))
-		      mp3Parts[1] = $('#txtCount').val();
-
-		  for (var i=0;i<mp3Parts[1];i++)
-		   {
-		           intPlayListCount++;
-		   	   	   myPlaylist.add({
-			         mp3:mp3Parts[0]
-	               });
-		   }
-   	   }
-
-	   $("#btnSubmit").css("display","none");
-	   var dtNow = new Date();
-		$.blockUI({
-			message: $("#divTime")
-		})
-		$("#divTime").css("display","block");
-		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
-		
-		console.log (myPlaylist);
-		
-        myPlaylist.play();
-	}
-	else if (strMp3.indexOf("BUILD") > -1)
-	{
-	   var urlParts = strMp3.substring(strMp3.indexOf("_")+1);
-	   
-	   var urlSegments = urlParts.split('_');
-	   var path = urlSegments[1];
-	   var trailingfilename = urlSegments[4];
-	   var starting = urlSegments[2];
-	   var ending = urlSegments[3];
-	   
-		myPlaylist = new jPlayerPlaylist({
-			jPlayer: "#jquery_jplayer"
-		},{
-			swfPath: "./scripts/",
-			supplied: "webmv, ogv, m4v, oga, mp3",
-			playlistOptions: {
-				  autoPlay: false,
-				  loopOnPrevious: false,
-				  shuffleOnLoop: true,
-				  enableRemoveControls: false,
-				  displayTime: 'slow',
-				  addTime: 'fast',
-				  removeTime: 'fast',
-				  shuffleTime: 'slow'
-			}
-		});
-	   
-	   switch (urlSegments[0])
-	   {
-	      case "Narayaneeyam":
-		        var lengthofending = (""+ending).length;
-				for (var j=starting;j<=ending;j++)
-				{
-				   var fileName = "";
-				   if ((""+j).length != lengthofending)
-				   {
-				      var difference = lengthofending - (""+j).length;
-					  var prepend0="0".repeat(difference)+(""+j);	
-					  fileName = path+prepend0+trailingfilename;
-				   }
-				   else 
-				      fileName = path +j+trailingfilename;
-					  
-  		   	   	   myPlaylist.add({
-			         mp3:fileName
-	               });
-				   
-				   $("#btnSubmit").css("display","none");
-				   var dtNow = new Date();
-					$.blockUI({
-						message: $("#divTime")
-					})
-					$("#divTime").css("display","block");
-					$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
-
-					myPlaylist.play();
-				}
-		        break;
-	   }
-	}
-	else 
-	{
-		$("#btnSubmit").css("display","none");
-		my_jPlayer.jPlayer("setMedia", {mp3: strMp3});    
-		chantLimit = $('#txtCount').val();
-		FormatText();
-		my_jPlayer.jPlayer("play");
-		
-		var dtNow = new Date();
-		$.blockUI({
-			message: $("#divTime")
-		})
-		$("#divTime").css("display","block");
-		$("#divTimeStart").html(dtNow.getHours()+":"+dtNow.getMinutes()+":"+dtNow.getSeconds());
-    }
-}
-
-
-function FormatText(strText)
-{
-    if ($("#hidModeOfProcessing").val() == "Special")
-	{
-	   strText = "Chanting " + ($("#drpChant option:selected").text()+"");
-	}
-	else 
-	{
-		strText = "Chanting " + $("#drpChant option:selected").text() +" " +((chantCount++)) + " of " + chantLimit + " time(s)";
-	}
-	
-	$("#diveJapaMala").text(strText);
-}
-
 </script>
 
-			
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -503,6 +422,5 @@ function FormatText(strText)
 
 </script>
 
-<input type="hidden" id="hidModeOfProcessing" name="hidModeOfProcessing">
 </body>
 </html>
