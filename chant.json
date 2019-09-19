@@ -118,7 +118,7 @@ var chantJson = {"chant": [
   },
   {
     "chantname": "Sri Vishnu Sahasranamam",
-    "chanturl": "SPECIALPROCESSING_./chants/svcore_ms_dhyanam.mp3:1,./chants/svcore_ms_core.mp3:n,./chants/svcore_ms_phalasruthi.mp3:1,./chants/lakshmyashtottaram.mp3:1"
+    "chanturl": "SPECIALPROCESSING__./chants/svcore_ms_dhyanam.mp3:1,./chants/svcore_ms_core.mp3:n,./chants/svcore_ms_phalasruthi.mp3:1,./chants/lakshmyashtottaram.mp3:1"
   },  
   {
     "chantname": "Sri Lakshmi Narasimha Sahasranamam",
