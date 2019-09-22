@@ -6,7 +6,7 @@ var chantJson = {"chant": [
   {
     "chantname": "Adityahrudayam",
     "chanturl":   
-	"SPECIALPROCESSING_./chants/aadityahrudayam_dhyanam.mp3:1,./chants/aadityahrudayam_core.mp3:n,./chants/aadityahrudayam_phala.mp3:1"	
+	"SPECIALPROCESSING__./chants/aadityahrudayam_dhyanam.mp3:1,./chants/aadityahrudayam_core.mp3:n,./chants/aadityahrudayam_phala.mp3:1"	
   },
   {
     "chantname": "Durga Devyai Namaha. Om Namaha Shivaya",
