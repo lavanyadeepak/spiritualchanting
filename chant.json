@@ -16,6 +16,10 @@ var chantJson = {"chant": [
     "chantname": "Shuklam Bharadharam",
     "chanturl": "./chants/shuklam.mp3"
   },
+  {
+    "chantname": "Kandar Anuboothi",
+    "chanturl": "./chants/kandaranubooti.mp3"
+  },
  {
     "chantname": "Gayatri Mantra",
     "chanturl": "./chants/gayatrimantra.mp3"
