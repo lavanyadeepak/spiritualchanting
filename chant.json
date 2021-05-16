@@ -26,7 +26,7 @@ var chantJson = {"chant": [
   },  
   {
     "chantname": "Sri Lakshmi Narasimha Sahasranamam (Quick)",
-	"chanturl": "./chants/SRI-NARASIMHA-SAHASRANAMA-STOTRA.mp3"
+	"chanturl": "./chants/snss.mp3"
   },
   {
     "chantname": "Naga Keyuru Haraya ",
