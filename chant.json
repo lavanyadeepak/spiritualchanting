@@ -141,10 +141,6 @@ var chantJson = {"chant": [
     "chanturl": "SPECIALPROCESSING__./chants/svcore_ms_dhyanam.mp3:1,./chants/svcore_ms_core.mp3:n,./chants/svcore_ms_phalasruthi.mp3:1,./chants/lakshmyashtottaram.mp3:1"
   },  
   {
-    "chantname": "Sri Lakshmi Narasimha Sahasranamam",
-	"chanturl": "./chants/srilakshminarasimhasahasranamam.mp3"
-  },
-  {
     "chantname": "Sri Vishnu Sahasranamam (Swathi) Chanting",
     "chanturl": "./chants/sv_swathi.mp3"
   },
@@ -168,10 +164,6 @@ var chantJson = {"chant": [
     "chantname": "Om Namo Venkatesaya Namaha",
 	"chanturl": "./chants/omnamovenkatesaya.mp3"
   },  
-  {
-     "chantname": "Thiruppavai (Chanting)",
-	 "chanturl": "./chants/tiruppaavai.mp3"
-  },
   {
      "chantname": "Thiruppavai 01(MLV)",
 	 "chanturl": "./chants/tpv/01.mp3"
