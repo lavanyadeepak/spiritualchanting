@@ -1,0 +1,426 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Chanting Utility</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link href="./css/jplayer.css" rel="stylesheet" type="text/css" />
+		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
+		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
+		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
+
+        <style type="text/css">
+            select,input, #divTime{
+                background-color:#5E42A6;
+                color:white;
+            }
+        </style>
+
+	</head>
+	<body>
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Chanting</a></li>
+                            <li><a href="#two">History</a></li>
+							<li><a href="#three">Get in touch</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<div id="contact-form" class="clearfix">
+									<label for="name">Chant: </label>
+												<Select Id="drpChant" name="drpChant">
+												  
+												</Select>
+												<br>
+										<label for="email">Chant Count</label>
+										<input type="number" min="1" max="20" step="1" value="1" id="txtCount" name="txtCount" required>
+									 
+										<br><br>
+										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
+										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
+										<input type="button" value="Play" id="btnPlaySelected" />	
+							
+										<div id="divPlayList">
+																			
+								    	</div>
+										
+										<br>
+											<section>
+													<div id="jquery_jplayer"></div>
+													<div id="jplayer_inspector"></div>
+												</section>						
+																				
+							    
+							</div>
+						</div>
+					</section>
+
+				<!-- One -->
+                <section id="two" class="wrapper style1 fade-up" style="color:white;">
+                    <div class="inner" style="padding-top:25%;">
+                        This small Jquery/JPlayer Utility, I humbly hope, would help people to do their chanting efficiently. 
+                        I dedicate this to the service of SSRF Inc. and attribute credits to my gurudev (Shanidev) for helping me get this in place on the first day of Mahalaya Paksham 2012.<br /><br />
+
+                        Definitely there is no copyright infringements or commercial benefits to the publisher or the host. We have tried to gather the media from available public domain for the benefit of the community.<br /><br />
+
+                        We have used HTML5/JQuery technology that is best rendered on Google Chrome and latest versions of Internet Explorer and Firefox. Mobile devices of similar family should render them fine as well.
+                    </div>
+                </section>
+
+
+				<!-- Three -->
+					<section id="three" class="wrapper style1 fade-up" style="color:white;">
+						<div class="inner" style="padding-top:10%;">
+							<h2>Get in touch</h2>
+							<p>deepak.vasudevan (at) outlook.com</p>
+							
+							<h2>Web Hosting Courtesy</h2>
+							<p>
+							   <Ul>
+                                  <li><a href="http://www.000webhost.com/">000WebHost</a></li>
+                                </Ul>
+							</p>
+							
+							<h2>Media Sponsors</h2>
+							<p>
+							  SSRF
+							</p>
+
+							<h2>Download Source Code</h2>
+							<p>
+							  You can download the source code of this utility for offline viewing and customization <a href="https://github.com/lavanyadeepak/spiritualchanting">here</a>.
+							</p>							
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+			<div id="dlgProgressIndicator" title="Chanting In Progress">
+			  <table id="tblPlayItem">
+			     <tr>
+				     <td>Selected Chant</td>
+					 <td id="divSelectedChant"></td>
+				 </tr>
+			     <tr>
+				     <td>Chant Composition</td>
+					 <td id="divChantComposition"></td>
+				 </tr>				 
+				<tr>
+				     <td>Current Avruthi</td>
+					 <td id="divCurrentAvruthi"></td>
+				 </tr>
+				 <tr>
+				    <td><span id="spnPhoneMode">To Phone</span></td>
+                    <td><span id="spnMute">Mute</span></td>
+				 </tr>
+				 <tr>
+				    <td colspan="2">
+					      <div class="meter green nostripes"> 
+							<span id="progress" style="width: 0%"></span>
+							<div id="labelProg">0%</div>
+						</div>
+					</td>
+				 </tr>
+			  </table>
+			</div>
+ 
+
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="scripts/jquery-migrate-1.4.1.js"></script>
+			<script src="scripts/lodash.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			<script type="text/javascript" src="./scripts/jquery.jplayer.min.js"></script>
+			<script type="text/javascript" src="./scripts/jplayer.playlist.min.js"></script>
+			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
+			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
+            <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="./chant.json"></script>
+			<script type="text/javascript">
+                
+				var arrPlayItem = [];
+				var arrPlayItemChoiceCount = [];
+                var arrMasterPlayList = [];
+				var intCurrentPlayIndex = 0;
+				var my_jPlayer = $("#jquery_jplayer");
+				my_jPlayer.jPlayer("volume",0.7);
+				var	opt_play_first = false, 
+				opt_auto_play = true, 
+				opt_text_playing = 
+				opt_text_selected = "Track selected"; 
+				var isPassiveClose = 0;
+				
+				var first_track = true;
+
+				$.jPlayer.timeFormat.padMin = false;
+				$.jPlayer.timeFormat.padSec = false;
+				$.jPlayer.timeFormat.sepMin = " min ";
+				$.jPlayer.timeFormat.sepSec = " sec";
+					
+					my_jPlayer.jPlayer({
+						errorAlerts: true,
+						volume: "1",
+						ready: function () {
+						},
+						timeupdate: function(event) {
+			
+						},
+						play: function(event) {						      
+						   DisplayProgress();
+     					},
+						pause: function(event) {
+						},
+						ended: function(event) {
+							intCurrentPlayIndex++;
+							if (intCurrentPlayIndex < arrMasterPlayList.length)
+							{
+								$("#divSelectedChant").html($("#drpChant option:selected").text());
+								$("#divChantComposition").html(GetPlayItemHTML());
+								$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+				
+							   my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+							   my_jPlayer.jPlayer("play");
+							}
+							else 
+							{
+							   isPassiveClose = 1;
+							   $("#dlgProgressIndicator").dialog("close");
+							   ResetState();
+							}
+						},
+						error: function (event) {
+							
+						},
+							swfPath: "./scripts/",
+							cssSelectorAncestor: "#jp_container",
+							supplied: "mp3",
+							wmode: "window"
+					});
+				
+				$("#btnAddToPlayList").bind("click", function (){
+				   var strCurrentItem = $("#drpChant").val();
+				   if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
+				   {
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrItems = strCurrentItem.split(",");
+					  for (var i=0;i<arrItems.length;i++)
+					  {
+							var eachItem = arrItems[i].split(":");
+							var iteratorValue = eachItem[1] == "n"?$("#txtCount").val():eachItem[1];
+							arrPlayItem.push(eachItem[0]);
+							arrPlayItemChoiceCount.push(iteratorValue);	
+					  }
+				   }
+				   else if (strCurrentItem.indexOf("BUILD_") > -1) 
+				   {
+				      alert ('Available in next version');
+				      /*
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrPlayComponents = strCurrentItem.split("_");
+					  
+					  for (var i=arrPlayComponents[1];i<arrPlayComponents[2];i++)
+					  {
+					     var strPlayItem = arrPlayComponents[0]+arrPlayComponents[3]+arrPlayComponents[i];
+						 console.log (strPlayItem);
+					  }
+					  */
+					  //0 Path 1 2 lbound ubound 3 filename.mp3
+				   }
+				   else 
+				   {
+				      arrPlayItem.push($("#drpChant").val());
+					  arrPlayItemChoiceCount.push($("#txtCount").val());
+				   }
+				});
+				
+				$("#btnResetPlaylist").bind("click", function (){
+				   arrPlayItem = [];
+				   arrPlayItemChoiceCount = [];
+				   arrMasterPlayList = [];
+				});
+				
+				$("#btnPlaySelected").bind("click", function(){
+	                if (arrPlayItem.length < 1)
+					{
+					   alert ("Please add a few items into playlist to proceed");
+					}					
+					else 
+					{
+					   for (var i=0;i<arrPlayItem.length;i++)
+						{
+							if (arrPlayItem[i].length < 1)
+							   continue;
+							else 
+							{
+							   for (var j=0;j<arrPlayItemChoiceCount[i];j++)
+							   {
+								  arrMasterPlayList.push(arrPlayItem[i]);
+							   }
+							}
+						}
+						
+						$("#divSelectedChant").html($("#drpChant option:selected").text());
+						$("#divChantComposition").html(GetPlayItemHTML());
+						$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+						
+						$("#dlgProgressIndicator").dialog("open");
+						my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+						DisplayProgress();
+						my_jPlayer.jPlayer("play");
+					}
+				});
+				
+				function ResetState()
+				{
+					 my_jPlayer.jPlayer("stop");
+				     $("#btnResetPlaylist").trigger("click");
+					 isPassiveClose = 0;
+                     intCurrentPlayIndex =0;
+				}
+				
+				function DisplayProgress()
+				{
+				    var percentage = 0;
+					percentage = Math.round((intCurrentPlayIndex/arrMasterPlayList.length)*100);
+					$("#progress").css('background', 'green');
+					$("#progress").css("width", percentage + "%");
+					$("#labelProg").text(percentage + "%");
+				}
+				
+				function GetPlayItemHTML()
+				{
+				   var strHTML = "<table>";
+				   strHTML += "<tr><td>Play Item</td><td>Repeat Count</td></tr>";
+				   for (var i=0;i<arrPlayItem.length;i++)
+				   {
+				      strHTML += "<tr>";
+					  strHTML += "<td>" + arrPlayItem[i] + " </td><td> "+ arrPlayItemChoiceCount[i]+"</td>";
+					  strHTML += "</tr>";
+				   }
+				   strHTML += "</table>";
+				   return (strHTML);
+				}
+
+			   $(function (){
+					$("#dlgProgressIndicator").dialog({
+					     autoOpen: false,
+						 modal:true,
+						 resizable:false,
+						 width:'auto',
+						    beforeClose: function(){
+							 if (isPassiveClose == 1)
+							 {
+							    return (true);
+							 }
+							 else 
+							 {
+							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
+							     return (true);
+							 else 
+							     return (false);
+							 }
+						 }
+					});
+					
+					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
+					
+					for (var i in chantJson.chant) {
+						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+					}
+				
+				$("#spnPhoneMode").click(function()
+				{
+				   var strCurrently = $("#spnPhoneMode").text();
+				   if (strCurrently	 == "To Phone")
+				   {
+				      my_jPlayer.jPlayer("volume",0.1);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"1px", 
+										 "border-style":"solid"});
+					  $("#spnPhoneMode").text("To Audio");
+				   }
+				   else if (strCurrently == "To Audio")
+				   {
+				      my_jPlayer.jPlayer("volume",0.7);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"0px", 
+										 "border-style":"none"});					  
+					  $("#spnPhoneMode").text("To Phone");
+				   }
+				});
+				
+				$("#spnMute").click(function ()
+				{
+				   var strCurrently = $("#spnMute").text();
+				   if (strCurrently	 == "Mute")
+				      {
+						  my_jPlayer.jPlayer("mute");
+						  $("#spnMute").text("Unmute");					  
+					  }
+				   else if (strCurrently == "Unmute")		 
+				   {
+						  my_jPlayer.jPlayer("unmute");
+						  $("#spnMute").text("Mute");					  				   
+				   }
+				});
+	
+			});
+			   
+String.prototype.repeat= function(n){
+    n= n || 1;
+    return Array(n+1).join(this);
+}
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35207111-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>
