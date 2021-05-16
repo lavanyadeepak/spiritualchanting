@@ -21,6 +21,10 @@ var chantJson = {"chant": [
     "chanturl": "./chants/kandaranubooti.mp3"
   },
   {
+    "chantname": "Samayapuram",
+    "chanturl": "./chants/samayapuram.mp3"
+  },  
+  {
     "chantname": "Sri Lakshmi Narasimha Sahasranamam (Quick)",
 	"chanturl": "./chants/SRI-NARASIMHA-SAHASRANAMA-STOTRA.mp3"
   },
