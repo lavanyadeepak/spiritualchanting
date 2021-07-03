@@ -1,288 +1,288 @@
-var chantJson = {"chant": [
+var chantJson={"chant": [
   {
     "chantname": "AIM",
-    "chanturl": "./chants/aim.mp3"
+    "chanturl": "./chants/ssrm/aim.mp3"
   },
   {
     "chantname": "Adityahrudayam",
     "chanturl":   
-	"SPECIALPROCESSING__./chants/aadityahrudayam_dhyanam.mp3:1,./chants/aadityahrudayam_core.mp3:n,./chants/aadityahrudayam_phala.mp3:1"	
+	"SPECIALPROCESSING__./chants/adityahrudayam/aadityahrudayam_dhyanam.mp3:1,./chants/adityahrudayam/aadityahrudayam_core.mp3:n,./chants/adityahrudayam/aadityahrudayam_phala.mp3:1"	
   },
   {
     "chantname": "Durga Devyai Namaha. Om Namaha Shivaya",
-    "chanturl": "./chants/durgadevyainamaha_omnamahshivaya.mp3"
+    "chanturl": "./chants/ssrf/durgadevyainamaha_omnamahshivaya.mp3"
   },
   {
     "chantname": "Shuklam Bharadharam",
-    "chanturl": "./chants/shuklam.mp3"
+    "chanturl": "./chants/ganapathy/shuklam.mp3"
   },
   {
     "chantname": "Kandar Anuboothi",
-    "chanturl": "./chants/kandaranubooti.mp3"
+    "chanturl": "./chants/murugan/kandaranubooti.mp3"
   },
   {
     "chantname": "Samayapuram",
-    "chanturl": "./chants/samayapuram.mp3"
+    "chanturl": "./chants/amman/samayapuram.mp3"
   },  
   {
     "chantname": "Sri Lakshmi Narasimha Sahasranamam (Quick)",
-	"chanturl": "./chants/snss.mp3"
+	"chanturl": "./chants/srilakshminarasimha/sahasranamam.mp3"
   },
   {
     "chantname": "Naga Keyuru Haraya ",
-	"chanturl": "./chants/SriLakshmiNarasimha_InfectionControl.mp3"
+	"chanturl": "./chants/srilakshminarasimha/SriLakshmiNarasimha_InfectionControl.mp3"
   },
  {
     "chantname": "Gayatri Mantra",
-    "chanturl": "./chants/gayatrimantra.mp3"
+    "chanturl": "./chants/gayatri/gayatrimantra.mp3"
   },
   {
     "chantname": "Annapoorna",
-    "chanturl": "./chants/annapoornastotram.mp3"
+    "chanturl": "./chants/parvathy/annapoornastotram.mp3"
   },  
   {
     "chantname": "Gum",
-    "chanturl": "./chants/gam.mp3"
+    "chanturl": "./chants/ssrf/gam.mp3"
   },
   {
     "chantname": "Ohm Gum Ganapathaye Namaha",
-    "chanturl": "./chants/ganeshayanamaha.mp3"
+    "chanturl": "./chants/ssrf/ganeshayanamaha.mp3"
   },
   {
     "chantname": "Dvayam",
-    "chanturl": "./chants/dvayam.mp3"
+    "chanturl": "./chants/srivishnu/dvayam.mp3"
   },
   {
     "chantname": "Ham",
-    "chanturl": "./chants/ham.mp3"
+    "chanturl": "./chants/ssrf/ham.mp3"
   },
   {
     "chantname": "Om Hum Hanumathe Namaha",
-    "chanturl": "./chants/hanumate.mp3"
+    "chanturl": "./chants/ssrf/hanumate.mp3"
   },
  { 
     "chantname": "Hanuman Mantra",
-    "chanturl": "./chants/hanuman_mantra.mp3"
+    "chanturl": "./chants/hanuman/hanuman_mantra.mp3"
   },
   {
     "chantname": "Hraam",
-    "chanturl": "./chants/hraam.mp3"
+    "chanturl": "./chants/ssrf/hraam.mp3"
   },
   {
     "chantname": "Hrim",
-    "chanturl": "./chants/hrim.mp3"
+    "chanturl": "./chants/ssrf/hrim.mp3"
   },
   {
     "chantname": "Hrim",
-    "chanturl": "./chants/hrim.mp3"
+    "chanturl": "./chants/ssrf/hrim.mp3"
   },
    {
     "chantname": "Kanda Shasthi Kavacham",
-    "chanturl": "./chants/ksk_ss.mp3"
+    "chanturl": "./chants/murugan/kandashastikavacham.mp3"
   },
   {
     "chantname": "Hroum",
-    "chanturl": "./chants/hroum.mp3"
+    "chanturl": "./chants/ssrf/hroum.mp3"
   },
   {
     "chantname": "Hrim",
-    "chanturl": "./chants/hrim.mp3"
+    "chanturl": "./chants/ssrf/hrim.mp3"
   },
   {
     "chantname": "Hrum",
-    "chanturl": "./chants/hrum.mp3"
+    "chanturl": "./chants/ssrf/hrum.mp3"
   },
   {
     "chantname": "Klim",
-    "chanturl": "./chants/klim.mp3"
+    "chanturl": "./chants/ssrf/klim.mp3"
   },
   {
     "chantname": "Om",
-    "chanturl": "./chants/om.mp3"
+    "chanturl": "./chants/ssrf/om.mp3"
   },
   {
     "chantname": "Om Nama Shivaya",
-    "chanturl": "./chants/omnamashivaya.mp3"
+    "chanturl": "./chants/shiva/omnamashivaya.mp3"
   },
   {
     "chantname": "Om Namo Bhagavathe Vasudevaya",
-    "chanturl": "./chants/omnamobhagavatevasudevaya.mp3"
+    "chanturl": "./chants/srivishnu/omnamobhagavatevasudevaya.mp3"
   },
   {
     "chantname": "Sham",
-    "chanturl": "./chants/sham.mp3"
+    "chanturl": "./chants/shiva/sham.mp3"
   },
   {
     "chantname": "Shree Ram Jayaram Jay Jay Ram",
-    "chanturl": "./chants/shreeram.mp3"
+    "chanturl": "./chants/ssrf/shreeram.mp3"
   },
   {
      "chantname": "Sree Annapoorna Stotram",
-	 "chanturl": "./chants/annapoornastotram.mp3"
+	 "chanturl": "./chants/parvathy/annapoornastotram.mp3"
   },
   {
     "chantname": "Shree Gurudev Datta",
-    "chanturl": "./chants/sridatta.mp3"
+    "chanturl": "./chants/ssrf/sridatta.mp3"
   },
   {
     "chantname": "Prayer for Rain",
-    "chanturl": "./chants/varuna.mp3"
+    "chanturl": "./chants/rain/varuna.mp3"
   },
   {
     "chantname": "Kaamasikashtakam",
-	"chanturl": "./chants/kaamaasikaashtakam.mp3"
+	"chanturl": "./chants/srilakshminarasimha/kaamaasikaashtakam.mp3"
   },
   {
     "chantname": "Sudharshana Astakam",
-	"chanturl": "./chants/sudarshanaashtakam.mp3"
+	"chanturl": "./chants/sudharshana/sudarshanaashtakam.mp3"
   },
   {
     "chantname": "Sri Vishnu Sahasranamam",
-    "chanturl": "SPECIALPROCESSING__./chants/svcore_ms_dhyanam.mp3:1,./chants/svcore_ms_core.mp3:n,./chants/svcore_ms_phalasruthi.mp3:1,./chants/lakshmyashtottaram.mp3:1"
+    "chanturl": "SPECIALPROCESSING__./chants/srivishnu/svcore_ms_dhyanam.mp3:1,./chants/srivishnu/svcore_ms_core.mp3:n,./chants/srivishnu/svcore_ms_phalasruthi.mp3:1,./chants/lakshmi/lakshmyashtottaram.mp3:1"
   },  
   {
     "chantname": "Sri Vishnu Sahasranamam (Swathi) Chanting",
-    "chanturl": "./chants/sv_swathi.mp3"
+    "chanturl": "./chants/srivishnu/star/sv_swathi.mp3"
   },
   {
     "chantname": "Sri Vishnu Sahasranamam (Uthirattadhi) Chanting",
-	"chanturl": "./chants/sv_uthirattadhi.mp3"
+	"chanturl": "./chants/srivishnu/star/sv_uthirattadhi.mp3"
   },
   {
     "chantname": "Om Triambakam",
-    "chanturl": "./chants/triambakam.mp3"
+    "chanturl": "./chants/shiva/triambakam.mp3"
   },
   {
     "chantname": "Neelanchana (Shani Sloka)",
-	"chanturl": "./chants/neelanchana.mp3"
+	"chanturl": "./chants/shani/neelanchana.mp3"
   },
   {
     "chantname": "Om Sham Shanaiswaraya Namaha",
-	"chanturl": "./chants/omsham.mp3"
+	"chanturl": "./chants/shani/omsham.mp3"
   },
   {
     "chantname": "Om Namo Venkatesaya Namaha",
-	"chanturl": "./chants/omnamovenkatesaya.mp3"
+	"chanturl": "./chants/srivishnu/omnamovenkatesaya.mp3"
   },  
   {
      "chantname": "Thiruppavai 01(MLV)",
-	 "chanturl": "./chants/tpv/01.mp3"
+	 "chanturl": "./chants/thiruppavai/01.mp3"
   },
   {
      "chantname": "Thiruppavai 02(MLV)",
-	 "chanturl": "./chants/tpv/02.mp3"
+	 "chanturl": "./chants/thiruppavai/02.mp3"
   },
   {
      "chantname": "Thiruppavai 03(MLV)",
-	 "chanturl": "./chants/tpv/03.mp3"
+	 "chanturl": "./chants/thiruppavai/03.mp3"
   },
   {
      "chantname": "Thiruppavai 04(MLV)",
-	 "chanturl": "./chants/tpv/04.mp3"
+	 "chanturl": "./chants/thiruppavai/04.mp3"
   },
   {
      "chantname": "Thiruppavai 05(MLV)",
-	 "chanturl": "./chants/tpv/05.mp3"
+	 "chanturl": "./chants/thiruppavai/05.mp3"
   },
   {
      "chantname": "Thiruppavai 06(MLV)",
-	 "chanturl": "./chants/tpv/06.mp3"
+	 "chanturl": "./chants/thiruppavai/06.mp3"
   },
   {
      "chantname": "Thiruppavai 07(MLV)",
-	 "chanturl": "./chants/tpv/07.mp3"
+	 "chanturl": "./chants/thiruppavai/07.mp3"
   },  
   {
      "chantname": "Thiruppavai 08(MLV)",
-	 "chanturl": "./chants/tpv/08.mp3"
+	 "chanturl": "./chants/thiruppavai/08.mp3"
   },  
   {
      "chantname": "Thiruppavai 09(MLV)",
-	 "chanturl": "./chants/tpv/09.mp3"
+	 "chanturl": "./chants/thiruppavai/09.mp3"
   },  
   {
      "chantname": "Thiruppavai 10(MLV)",
-	 "chanturl": "./chants/tpv/10.mp3"
+	 "chanturl": "./chants/thiruppavai/10.mp3"
   },  
   {
      "chantname": "Thiruppavai 11(MLV)",
-	 "chanturl": "./chants/tpv/11.mp3"
+	 "chanturl": "./chants/thiruppavai/11.mp3"
   },
   {
      "chantname": "Thiruppavai 12(MLV)",
-	 "chanturl": "./chants/tpv/12.mp3"
+	 "chanturl": "./chants/thiruppavai/12.mp3"
   },    
   {
      "chantname": "Thiruppavai 13(MLV)",
-	 "chanturl": "./chants/tpv/13.mp3"
+	 "chanturl": "./chants/thiruppavai/13.mp3"
   },    
   {
      "chantname": "Thiruppavai 14(MLV)",
-	 "chanturl": "./chants/tpv/14.mp3"
+	 "chanturl": "./chants/thiruppavai/14.mp3"
   },    
   {
      "chantname": "Thiruppavai 15(MLV)",
-	 "chanturl": "./chants/tpv/15.mp3"
+	 "chanturl": "./chants/thiruppavai/15.mp3"
   },    
   {
      "chantname": "Thiruppavai 16(MLV)",
-	 "chanturl": "./chants/tpv/16.mp3"
+	 "chanturl": "./chants/thiruppavai/16.mp3"
   },    
   {
      "chantname": "Thiruppavai 17(MLV)",
-	 "chanturl": "./chants/tpv/17.mp3"
+	 "chanturl": "./chants/thiruppavai/17.mp3"
   },    
   {
      "chantname": "Thiruppavai 18(MLV)",
-	 "chanturl": "./chants/tpv/18.mp3"
+	 "chanturl": "./chants/thiruppavai/18.mp3"
   },    
   {
      "chantname": "Thiruppavai 19(MLV)",
-	 "chanturl": "./chants/tpv/19.mp3"
+	 "chanturl": "./chants/thiruppavai/19.mp3"
   },      
   {
      "chantname": "Thiruppavai 20(MLV)",
-	 "chanturl": "./chants/tpv/20.mp3"
+	 "chanturl": "./chants/thiruppavai/20.mp3"
   },      
   {
      "chantname": "Thiruppavai (MLV)",
-	 "chanturl": "./chants/tpv/21.mp3"
+	 "chanturl": "./chants/thiruppavai/21.mp3"
   },      
   {
      "chantname": "Thiruppavai 22(MLV)",
-	 "chanturl": "./chants/tpv/22.mp3"
+	 "chanturl": "./chants/thiruppavai/22.mp3"
   },      
   {
      "chantname": "Thiruppavai 23(MLV)",
-	 "chanturl": "./chants/tpv/23.mp3"
+	 "chanturl": "./chants/thiruppavai/23.mp3"
   },      
   {
      "chantname": "Thiruppavai 24(MLV)",
-	 "chanturl": "./chants/tpv/24.mp3"
+	 "chanturl": "./chants/thiruppavai/24.mp3"
   },      
   {
      "chantname": "Thiruppavai 25(MLV)",
-	 "chanturl": "./chants/tpv/25.mp3"
+	 "chanturl": "./chants/thiruppavai/25.mp3"
   },      
   {
      "chantname": "Thiruppavai 26(MLV)",
-	 "chanturl": "./chants/tpv/26.mp3"
+	 "chanturl": "./chants/thiruppavai/26.mp3"
   },      
   {
      "chantname": "Thiruppavai 27(MLV)",
-	 "chanturl": "./chants/tpv/27.mp3"
+	 "chanturl": "./chants/thiruppavai/27.mp3"
   },      
   {
      "chantname": "Thiruppavai 28(MLV)",
-	 "chanturl": "./chants/tpv/28.mp3"
+	 "chanturl": "./chants/thiruppavai/28.mp3"
   },        
   {
      "chantname": "Thiruppavai 29(MLV)",
-	 "chanturl": "./chants/tpv/29.mp3"
+	 "chanturl": "./chants/thiruppavai/29.mp3"
   },      
   {
      "chantname": "Thiruppavai 30(MLV)",
-	 "chanturl": "./chants/tpv/30.mp3"
+	 "chanturl": "./chants/thiruppavai/30.mp3"
   },
   {
      "chantname": "Narayaneeyam",
@@ -290,10 +290,10 @@ var chantJson = {"chant": [
   },
   {
      "chantname": "Hanuman Chaleesa",
-	 "chanturl": "./chants/hanumanchaleesa.mp3"
+	 "chanturl": "./chants/hanuman/hanumanchaleesa.mp3"
   },
   {
      "chantname": "Rudram Chamakam",
-	 "chanturl": "./chants/svbcrudramchamakam.mp3"
+	 "chanturl": "./chants/shiva/svbcrudramchamakam.mp3"
   }  
 ] };
