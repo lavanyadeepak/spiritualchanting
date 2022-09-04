@@ -1,7 +1,7 @@
 var chantJson={"chant": [
   {
     "chantname": "AIM",
-    "chanturl": "./chants/ssrm/aim.mp3"
+    "chanturl": "./chants/ssrf/aim.mp3"
   },
   {
     "chantname": "Adityahrudayam",
