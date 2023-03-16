@@ -6,7 +6,7 @@ var chantJson={"chant": [
   {
     "chantname": "Adityahrudayam",
     "chanturl":   
-	"SPECIALPROCESSING__./chants/adityahrudayam/aadityahrudayam_dhyanam.mp3:1,./chants/adityahrudayam/aadityahrudayam_core.mp3:n,./chants/adityahrudayam/aadityahrudayam_phala.mp3:1"	
+	"SPECIALPROCESSING__./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_dhyanam.mp3:1,./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_core.mp3:n,./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_phala.mp3:1"	
   },
   {
     "chantname": "Durga Devyai Namaha. Om Namaha Shivaya",
@@ -154,11 +154,11 @@ var chantJson={"chant": [
   },
   {
     "chantname": "Neelanchana (Shani Sloka)",
-	"chanturl": "./chants/shani/neelanchana.mp3"
+	"chanturl": "./chants/navagraha/shani/neelanchana.mp3"
   },
   {
     "chantname": "Om Sham Shanaiswaraya Namaha",
-	"chanturl": "./chants/shani/omsham.mp3"
+	"chanturl": "./chants/navagraha/shani/omsham.mp3"
   },
   {
     "chantname": "Om Namo Venkatesaya Namaha",
