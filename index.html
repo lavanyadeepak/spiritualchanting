@@ -143,6 +143,10 @@
 				    <td><span id="spnPhoneMode">To Phone</span></td>
                     <td><span id="spnMute">Mute</span></td>
 				 </tr>
+				 <tr id="trCurrentCount" style="display:none;">
+				    <td colspan="2">
+					    Current Count:<span id="spnCurrentCount"></span> of <span id="spnTotalCount"></span>
+					</td>
 				 <tr>
 				    <td colspan="2">
 					      <div class="meter green nostripes"> 
@@ -201,8 +205,14 @@
 						timeupdate: function(event) {
 			
 						},
-						play: function(event) {						      
+						play: function(event) {		
 						   DisplayProgress();
+								if (arrMasterPlayList.length > 0)
+								{
+									$("#trCurrentCount").css("display","block");
+									$("#spnCurrentCount").text(intCurrentPlayIndex + 1);
+									$("#spnTotalCount").text(arrMasterPlayList.length);
+								}
      					},
 						pause: function(event) {
 						},
@@ -222,6 +232,12 @@
 							   isPassiveClose = 1;
 							   $("#dlgProgressIndicator").dialog("close");
 							   ResetState();
+							   	if (arrMasterPlayList.length < 1)
+								{
+									$("#trCurrentCount").css("display","none");
+									$("#spnCurrentCount").text("");
+									$("#spnTotalCount").text("");
+								}
 							}
 						},
 						error: function (event) {
@@ -351,7 +367,10 @@
 							 else 
 							 {
 							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
-							     return (true);
+								{
+								    ResetState();
+									return (true);
+								}
 							 else 
 							     return (false);
 							 }
