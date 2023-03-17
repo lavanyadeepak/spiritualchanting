@@ -50,7 +50,7 @@
 							<div id="contact-form" class="clearfix">
 									<label for="name">Chant: </label>
 												<Select Id="drpChant" name="drpChant">
-												  
+						                           <option value="-1080">--Select a Chant--</option>						  
 												</Select>
 												<br>
 										<label for="email">Chant Count</label>
@@ -328,6 +328,7 @@
 				     $("#btnResetPlaylist").trigger("click");
 					 isPassiveClose = 0;
                      intCurrentPlayIndex =0;
+					 $('select#drpChant').prop('selectedIndex', 0);
 				}
 				
 				function DisplayProgress()
