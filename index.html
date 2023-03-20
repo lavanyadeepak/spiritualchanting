@@ -251,7 +251,13 @@
 				
 				$("#btnAddToPlayList").bind("click", function (){
 				   var strCurrentItem = $("#drpChant").val();
-				   if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
+				   if (strCurrentItem < 0)
+				   {
+				      //Do Nothing
+				   }
+				   else 
+				   {
+				       if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
 				   {
 				      strCurrentItem = strCurrentItem.split("__")[1];
 					  var arrItems = strCurrentItem.split(",");
@@ -282,7 +288,8 @@
 				   {
 				      arrPlayItem.push($("#drpChant").val());
 					  arrPlayItemChoiceCount.push($("#txtCount").val());
-				   }
+				   }  
+				 } 
 				});
 				
 				$("#btnResetPlaylist").bind("click", function (){
