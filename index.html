@@ -59,7 +59,9 @@
 										<br><br>
 										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
 										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
-										<input type="button" value="Play" id="btnPlaySelected" />	
+										<input type="button" value="Play" id="btnPlaySelected" />
+										<input type="button" value="Save Playlist" id="btnSavePlaylist" onClick="btnSavePlaylist_Click()" />
+										<input type="button" value="Load Playlist" id="btnLoadPlaylist" onClick="btnLoadPlaylist_Click()"/>										
 							
 										<div id="divPlayList">
 																			
@@ -146,6 +148,9 @@
 			  </table>
 			</div>
  
+            <div style="visibility:none;">
+			    <input type="file" id="myFile" onchange="ProcessSelectedFile(this)">
+			</div>
 
 
 		<!-- Scripts -->
@@ -163,6 +168,7 @@
 			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
 			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="FileSaver.js"></script>
 			<script type="text/javascript" src="./chant.json"></script>
 			<script type="text/javascript">
                 
@@ -349,8 +355,59 @@
 				   strHTML += "</table>";
 				   return (strHTML);
 				}
-
-			   $(function (){
+				
+				function btnSavePlaylist_Click()
+				{
+				      if (arrPlayItem.length > 0)
+					  {
+					     var playItems = JSON.stringify(arrPlayItem);
+						 var playItemsCount = JSON.stringify(arrPlayItemChoiceCount);
+						  
+						 var userInput = '{"PlayItems": "'+btoa(playItems)+'","PlayItemsCount": "'+btoa(playItemsCount)+'"}';
+						  
+						 var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
+						  saveAs(blob, "dynamic.txt");
+					  }
+				}
+				
+				function btnLoadPlaylist_Click()
+				{
+				   $("#myFile").trigger("click");
+				}
+				
+				function ProcessSelectedFile(input)
+				{
+				   if (input.files.length > 0)
+				   {
+				      let f = input.files[0];
+				      let reader = new FileReader();
+					  reader.readAsText(f);
+					  reader.onload = function() {
+						var jsnPlayList = JSON.parse(reader.result);
+						var playItems = jsnPlayList["PlayItems"];
+						var playItemsCount = jsnPlayList["PlayItemsCount"];
+						if (playItems != 'undefined' && playItemsCount != 'undefined')
+						{
+						    arrPlayItem = atob(playItems).split(",");
+							arrPlayItemChoiceCount = atob(playItemsCount).split(",");							
+						    for (var i in arrPlayItem)
+							{
+							    arrPlayItem[i] = JSON.parse(arrPlayItem[i])[0];
+							}
+							
+							for (var i in arrPlayItemChoiceCount)
+							{
+							    arrPlayItemChoiceCount[i] = JSON.parse(arrPlayItemChoiceCount[i])[0];
+							}
+						}
+    				  };
+					  reader.onerror = function() {
+						console.log(reader.error);
+					};
+				   }
+				}
+				
+				$(function (){
 					$("#dlgProgressIndicator").dialog({
 					     autoOpen: false,
 						 modal:true,
@@ -379,6 +436,7 @@
 					for (var i in chantJson.chant) {
 						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
 					}
+				
 				
 				$("#spnPhoneMode").click(function()
 				{

@@ -138,7 +138,7 @@ var chantJson={"chant": [
   },
   {
     "chantname": "Sri Vishnu Sahasranamam",
-    "chanturl": "SPECIALPROCESSING__./chants/srivishnu/svcore_ms_dhyanam.mp3:1,./chants/srivishnu/svcore_ms_core.mp3:n,./chants/srivishnu/svcore_ms_phalasruthi.mp3:1,./chants/lakshmi/lakshmyashtottaram.mp3:1"
+    "chanturl": "SPECIALPROCESSING__./chants/srivishnu/ms/svcore_dhyanam.mp3:1,./chants/srivishnu/ms/svcore_core.mp3:n,./chants/srivishnu/ms/svcore_phalasruthi.mp3:1,./chants/lakshmi/lakshmyashtottaram.mp3:1"
   },  
   {
     "chantname": "Sri Vishnu Sahasranamam (Swathi) Chanting",
