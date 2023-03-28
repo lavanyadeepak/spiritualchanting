@@ -389,15 +389,18 @@
 						if (playItems != 'undefined' && playItemsCount != 'undefined')
 						{
 						    arrPlayItem = atob(playItems).split(",");
-							arrPlayItemChoiceCount = atob(playItemsCount).split(",");							
-						    for (var i in arrPlayItem)
-							{
-							    arrPlayItem[i] = JSON.parse(arrPlayItem[i])[0];
-							}
+							arrPlayItemChoiceCount = atob(playItemsCount).split(",");	
+
+                            var jsnPlayItem = JSON.parse(arrPlayItem);
+							var jsnPlayItemCount = JSON.parse(arrPlayItemChoiceCount);
 							
-							for (var i in arrPlayItemChoiceCount)
+							arrPlayItem = [];
+							arrPlayItemChoiceCount = [];
+							
+							for (var i =0;i<jsnPlayItem.length;i++)
 							{
-							    arrPlayItemChoiceCount[i] = JSON.parse(arrPlayItemChoiceCount[i])[0];
+							   arrPlayItem.push(jsnPlayItem[i]);
+							   arrPlayItemChoiceCount.push(jsnPlayItemCount[i]);
 							}
 						}
     				  };
