@@ -153,6 +153,10 @@ var chantJson={"chant": [
     "chanturl": "./chants/shiva/triambakam.mp3"
   },
   {
+	 "chantname": "Om Triambakam (Thirukadaiyur)",
+	 "chanturl": "./chants/shiva/thirukadaiyur_omtriambakam.mp3"
+  },
+  {
     "chantname": "Neelanchana (Shani Sloka)",
 	"chanturl": "./chants/navagraha/shani/neelanchana.mp3"
   },
