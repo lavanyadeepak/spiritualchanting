@@ -156,6 +156,10 @@ var chantJson={"chant": [
 	 "chantname": "Om Triambakam (Thirukadaiyur)",
 	 "chanturl": "./chants/shiva/thirukadaiyur_omtriambakam.mp3"
   },
+    {
+	 "chantname": "Om Triambakam (Uma Mohan -- Divine Chants of Rudra)",
+	 "chanturl": "./chants/shiva/umamohan_omtriambakam.mp3"
+  },
   {
     "chantname": "Neelanchana (Shani Sloka)",
 	"chanturl": "./chants/navagraha/shani/neelanchana.mp3"
