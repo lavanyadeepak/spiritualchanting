@@ -17,6 +17,7 @@
 		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
 		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
 		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
+		<link href="./css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css" />
 
         <style type="text/css">
             select,input, #divTime{
@@ -34,6 +35,7 @@
 					<nav>
 						<ul>
 							<li><a href="#intro">Chanting</a></li>
+							<li><a href="#copyright">Media Ownership</a></li>
                             <li><a href="#two">History</a></li>
 							<li><a href="#three">Get in touch</a></li>
 						</ul>
@@ -75,6 +77,15 @@
 																				
 							    
 							</div>
+						</div>
+					</section>
+
+					
+					<section id="copyright" class="wrapper style1 fade-up" style="color:white;">
+						<div class="inner" style="padding-top:25%;">
+                             <div id="divMediaOwnership">
+
+							 </div>							
 						</div>
 					</section>
 
@@ -170,6 +181,7 @@
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
 			<script type="text/javascript" src="FileSaver.js"></script>
 			<script type="text/javascript" src="./chant.json"></script>
+			<script type="text/javascript" src="./scripts/dataTables.min.js"></script>
 			<script type="text/javascript">
                 
 				var arrPlayItem = [];
@@ -409,9 +421,8 @@
 					};
 				   }
 				}
-				
-				$(function (){
-					$("#dlgProgressIndicator").dialog({
+
+				$("#dlgProgressIndicator").dialog({
 					     autoOpen: false,
 						 modal:true,
 						 resizable:false,
@@ -433,15 +444,34 @@
 							 }
 						 }
 					});
-					
+
 					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
 					
 					for (var i in chantJson.chant) {
 						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
 					}
-				
-				
-				$("#spnPhoneMode").click(function()
+
+					let tableHTML = "";
+
+					tableHTML += "<table id='tblMediaOwnership' style='border-style:solid;border-width:thick;'><thead><tr title='Media URL'>";
+						tableHTML += "<th>Name</th>";
+						tableHTML += "<th>Media Owner</th>";
+						tableHTML +="</tr></thead>";
+
+					tableHTML += "<tbody>";
+					chantJson.chant.forEach(function(chant) 
+					{
+						tableHTML += "<tr title='"+chant.chanturl+"''>";
+					    tableHTML +="<td>" + chant.chantname + "</td>";
+						tableHTML +="<td>" + chant.chantownership + "</td>";
+						tableHTML +="</tr>";
+					});
+
+					tableHTML +="</tbody></table>";
+
+					$("#divMediaOwnership").html(tableHTML);
+
+					$("#spnPhoneMode").click(function()
 				{
 				   var strCurrently = $("#spnPhoneMode").text();
 				   if (strCurrently	 == "To Phone")
@@ -476,7 +506,9 @@
 						  $("#spnMute").text("Mute");					  				   
 				   }
 				});
-	
+					
+				$(function (){
+					let table = new DataTable('#tblMediaOwnership');
 			});
 			   
 String.prototype.repeat= function(n){
