@@ -8,7 +8,7 @@ var chantJson={"chant": [
   {
     "chantname": "Adityahrudayam (from Prapatti Website)",
     "chanturl":   
-	"SPECIALPROCESSING__./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_dhyanam.mp3:1,./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_core.mp3:n,./chants/navagraha/soorya/adityahrudayam/aadityahrudayam_phala.mp3:1"	
+	"SPECIALPROCESSING__./chants/adityahrudayam/aadityahrudayam_dhyanam.mp3:1,./chants/adityahrudayam/aadityahrudayam_core.mp3:n,./chants/adityahrudayam/aadityahrudayam_phala.mp3:1"	
      ,"chantownership":"Public Domain"
 },
   {
