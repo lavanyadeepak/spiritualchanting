@@ -182,6 +182,8 @@
 			<script type="text/javascript" src="FileSaver.js"></script>
 			<script type="text/javascript" src="./chant.json"></script>
 			<script type="text/javascript" src="./scripts/dataTables.min.js"></script>
+			<script type="text/javascript" src="./scripts/dataTables.select.js"></script>
+			<script type="text/javascript" src="./scripts/select.dataTables.js"></script>
 			<script type="text/javascript">
                 
 				var arrPlayItem = [];
@@ -508,7 +510,11 @@
 				});
 					
 				$(function (){
-					let table = new DataTable('#tblMediaOwnership');
+					let table = new DataTable('#tblMediaOwnership',{
+						select: {
+								style: 'multi'
+							}
+					});
 			});
 			   
 String.prototype.repeat= function(n){
