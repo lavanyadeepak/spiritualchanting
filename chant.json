@@ -180,7 +180,7 @@ var chantJson={"chant": [
   {
     "chantownership":"Public Domain",
     "chantname": "Sri Vishnu Sahasranamam",
-    "chanturl": "SPECIALPROCESSING__./chants/srivishnu/ms/svcore_dhyanam.mp3:1,./chants/srivishnu/ms/svcore_core.mp3:n,./chants/srivishnu/ms/svcore_phalasruthi.mp3:1,./chants/lakshmi/lakshmyashtottaram.mp3:1"
+    "chanturl": "SPECIALPROCESSING__./chants/srivishnu/svcore_dhyanam.mp3:1,./chants/srivishnu/svcore_core.mp3:n,./chants/srivishnu/svcore_phalasruthi.mp3:1,./chants/lakshmi/lakshmyashtottaram.mp3:1"
   },  
   {
     "chantownership":"Public Domain",
