@@ -1,0 +1,652 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Chanting Utility</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+		<link href="./css/jplayer.css" rel="stylesheet" type="text/css" />
+		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
+		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
+		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
+		<link href="./css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css" />
+
+        <style type="text/css">
+            select,input, #divTime{
+                background-color:#5E42A6;
+                color:white;
+            }
+
+			.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+		.dropbtn {
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px 20px;
+			border: none;
+			cursor: pointer;
+		}
+
+		.dropdown-content {
+			display: none;
+			position: absolute;
+			background-color: #f9f9f9;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+		}
+
+		.dropdown-content a {
+			color: black;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+		}
+
+		.dropdown-content a:hover {
+			background-color: #f1f1f1;
+		}
+
+		.dropdown:hover .dropdown-content {
+			display: block;
+		}
+
+		.dropdown:hover .dropbtn {
+			background-color: #45a049;
+		}
+        </style>
+
+	</head>
+	<body>
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Chanting</a></li>
+							<li><a href="#copyright">Media Ownership</a></li>
+                            <li><a href="#two">History</a></li>
+							<li><a href="#three">Get in touch</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<div id="contact-form" class="clearfix">
+									<label for="name">Chant: </label>
+												<Select Id="drpChant" name="drpChant">
+						                           <option value="-1080">--Select a Chant--</option>						  
+												</Select>
+												<br>
+										<label for="email">Chant Count</label>
+										<input type="number" min="1" max="20" step="1" value="1" id="txtCount" name="txtCount" required>
+									 
+										<br><br>
+										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
+										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
+										<input type="button" value="Play" id="btnPlaySelected" />
+<div class="dropdown">
+    <button id="btnDropdown" class="dropbtn">Playlist Actions</button>
+    <div id="dropdownContent" class="dropdown-content">
+        <a href="#" onclick="savePlaylist('m3u')">Save as M3U</a>
+        <a href="#" onclick="savePlaylist('txt')">Save as TXT</a>
+        <a href="#" onclick="loadPlaylist()">Load Playlist</a>
+    </div>
+</div>
+										<div id="divPlayList">
+																			
+								    	</div>
+										
+										<br>
+											<section>
+													<div id="jquery_jplayer"></div>
+													<div id="jplayer_inspector"></div>
+												</section>						
+																				
+							    
+							</div>
+						</div>
+					</section>
+
+					
+					<section id="copyright" class="wrapper style1 fade-up" style="color:white;">
+						<div class="inner" style="padding-top:25%;">
+                             <div id="divMediaOwnership">
+
+							 </div>							
+						</div>
+					</section>
+
+				<!-- One -->
+                <section id="two" class="wrapper style1 fade-up" style="color:white;">
+                    <div class="inner" style="padding-top:25%;">
+                        This small Jquery/JPlayer Utility, I humbly hope, would help people to do their chanting efficiently. 
+                        I dedicate this to the service of SSRF Inc. and attribute credits to my gurudev (Shanidev) for helping me get this in place on the first day of Mahalaya Paksham 2012.<br /><br />
+
+                        Definitely there is no copyright infringements or commercial benefits to the publisher or the host. We have tried to gather the media from available public domain for the benefit of the community.<br /><br />
+
+                        We have used HTML5/JQuery technology that is best rendered on Google Chrome and latest versions of Internet Explorer and Firefox. Mobile devices of similar family should render them fine as well.
+                    </div>
+                </section>
+
+
+				<!-- Three -->
+					<section id="three" class="wrapper style1 fade-up" style="color:white;">
+						<div class="inner" style="padding-top:10%;">
+							<h2>Get in touch</h2>
+							<p>Click <a href="https://lavanyadeepak.github.io/#contact">here</a></p>
+
+							<h2>Download Source Code</h2>
+							<p>
+							  You can download the source code of this utility for offline viewing and customization <a href="https://github.com/lavanyadeepak/spiritualchanting">here</a>.
+							</p>							
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Deepak Kumar Vasudevan. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+			<div id="dlgProgressIndicator" title="Chanting In Progress">
+			  <table id="tblPlayItem">
+			     <tr>
+				     <td>Selected Chant</td>
+					 <td id="divSelectedChant"></td>
+				 </tr>
+			     <tr>
+				     <td>Chant Composition</td>
+					 <td id="divChantComposition"></td>
+				 </tr>				 
+				<tr>
+				     <td>Current Avruthi</td>
+					 <td id="divCurrentAvruthi"></td>
+				 </tr>
+				 <tr>
+				    <td><span id="spnPhoneMode">To Phone</span></td>
+                    <td><span id="spnMute">Mute</span></td>
+				 </tr>
+				 <tr id="trCurrentCount" style="display:none;">
+				    <td colspan="2">
+					    Current Count:<span id="spnCurrentCount"></span> of <span id="spnTotalCount"></span>
+					</td>
+				 <tr>
+				    <td colspan="2">
+					      <div class="meter green nostripes"> 
+							<span id="progress" style="width: 0%"></span>
+							<div id="labelProg">0%</div>
+						</div>
+					</td>
+				 </tr>
+			  </table>
+			</div>
+ 
+            <div style="visibility:none;">
+			    <input type="file" id="myFile" onchange="ProcessSelectedFile(this)">
+			</div>
+
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="scripts/jquery-migrate-1.4.1.js"></script>
+			<script src="scripts/lodash.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			<script type="text/javascript" src="./scripts/jquery.jplayer.min.js"></script>
+			<script type="text/javascript" src="./scripts/jplayer.playlist.min.js"></script>
+			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
+			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
+            <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="FileSaver.js"></script>
+			<script type="text/javascript" src="./chant.json"></script>
+			<script type="text/javascript" src="./scripts/dataTables.min.js"></script>
+			<script type="text/javascript" src="./scripts/dataTables.select.js"></script>
+			<script type="text/javascript" src="./scripts/select.dataTables.js"></script>
+			<script type="text/javascript">
+                
+				var arrPlayItem = [];
+				var arrPlayItemChoiceCount = [];
+                var arrMasterPlayList = [];
+				var intCurrentPlayIndex = 0;
+				var my_jPlayer = $("#jquery_jplayer");
+				my_jPlayer.jPlayer("volume",0.7);
+				var	opt_play_first = false, 
+				opt_auto_play = true, 
+				opt_text_playing = 
+				opt_text_selected = "Track selected"; 
+				var isPassiveClose = 0;
+				
+				var first_track = true;
+
+				$.jPlayer.timeFormat.padMin = false;
+				$.jPlayer.timeFormat.padSec = false;
+				$.jPlayer.timeFormat.sepMin = " min ";
+				$.jPlayer.timeFormat.sepSec = " sec";
+					
+					my_jPlayer.jPlayer({
+						errorAlerts: true,
+						volume: "1",
+						ready: function () {
+						},
+						timeupdate: function(event) {
+			
+						},
+						play: function(event) {		
+						   DisplayProgress();
+								if (arrMasterPlayList.length > 0)
+								{
+									$("#trCurrentCount").css("display","block");
+									$("#spnCurrentCount").text(intCurrentPlayIndex + 1);
+									$("#spnTotalCount").text($("#txtCount").val());
+								}
+     					},
+						pause: function(event) {
+						},
+						ended: function(event) {
+							intCurrentPlayIndex++;
+							if (intCurrentPlayIndex < arrMasterPlayList.length)
+							{
+								$("#divSelectedChant").html($("#drpChant option:selected").text());
+								$("#divChantComposition").html(GetPlayItemHTML());
+								$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+				
+							   my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+							   my_jPlayer.jPlayer("play");
+							}
+							else 
+							{
+							   isPassiveClose = 1;
+							   $("#dlgProgressIndicator").dialog("close");
+							   ResetState();
+							   	if (arrMasterPlayList.length < 1)
+								{
+									$("#trCurrentCount").css("display","none");
+									$("#spnCurrentCount").text("");
+									$("#spnTotalCount").text("");
+								}
+							}
+						},
+						error: function (event) {
+							
+						},
+							swfPath: "./scripts/",
+							cssSelectorAncestor: "#jp_container",
+							supplied: "mp3",
+							wmode: "window"
+					});
+				
+				$("#btnAddToPlayList").bind("click", function (){
+				   var strCurrentItem = $("#drpChant").val();
+				   if (strCurrentItem < 0)
+				   {
+				      //Do Nothing
+				   }
+				   else 
+				   {
+				       if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
+				   {
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrItems = strCurrentItem.split(",");
+					  for (var i=0;i<arrItems.length;i++)
+					  {
+							var eachItem = arrItems[i].split(":");
+							var iteratorValue = eachItem[1] == "n"?$("#txtCount").val():eachItem[1];
+							arrPlayItem.push(eachItem[0]);
+							arrPlayItemChoiceCount.push(iteratorValue);	
+					  }
+				   }
+				   else if (strCurrentItem.indexOf("BUILD_") > -1) 
+				   {
+				      alert ('Available in next version');
+				      /*
+				      strCurrentItem = strCurrentItem.split("__")[1];
+					  var arrPlayComponents = strCurrentItem.split("_");
+					  
+					  for (var i=arrPlayComponents[1];i<arrPlayComponents[2];i++)
+					  {
+					     var strPlayItem = arrPlayComponents[0]+arrPlayComponents[3]+arrPlayComponents[i];
+						 console.log (strPlayItem);
+					  }
+					  */
+					  //0 Path 1 2 lbound ubound 3 filename.mp3
+				   }
+				   else 
+				   {
+				      arrPlayItem.push($("#drpChant").val());
+					  arrPlayItemChoiceCount.push($("#txtCount").val());
+				   }  
+				 } 
+				});
+				
+				$("#btnResetPlaylist").bind("click", function (){
+				   arrPlayItem = [];
+				   arrPlayItemChoiceCount = [];
+				   arrMasterPlayList = [];
+				});
+				
+				$("#btnPlaySelected").bind("click", function(){
+	                if (arrPlayItem.length < 1)
+					{
+					   alert ("Please add a few items into playlist to proceed");
+					}					
+					else 
+					{
+					   for (var i=0;i<arrPlayItem.length;i++)
+						{
+							if (arrPlayItem[i].length < 1)
+							   continue;
+							else 
+							{
+							   for (var j=0;j<arrPlayItemChoiceCount[i];j++)
+							   {
+								  arrMasterPlayList.push(arrPlayItem[i]);
+							   }
+							}
+						}
+						
+						$("#divSelectedChant").html($("#drpChant option:selected").text());
+						$("#divChantComposition").html(GetPlayItemHTML());
+						$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
+						
+						$("#dlgProgressIndicator").dialog("open");
+						my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
+						DisplayProgress();
+						my_jPlayer.jPlayer("play");
+					}
+				});
+				
+				function ResetState()
+				{
+					 my_jPlayer.jPlayer("stop");
+				     $("#btnResetPlaylist").trigger("click");
+					 isPassiveClose = 0;
+                     intCurrentPlayIndex =0;
+					 $('select#drpChant').prop('selectedIndex', 0);
+					 $('#txtCount').val(1);
+				}
+				
+				function DisplayProgress()
+				{
+				    var percentage = 0;
+					percentage = Math.round((intCurrentPlayIndex/arrMasterPlayList.length)*100);
+					$("#progress").css('background', 'green');
+					$("#progress").css("width", percentage + "%");
+					$("#labelProg").text(percentage + "%");
+				}
+				
+				function GetPlayItemHTML()
+				{
+				   var strHTML = "<table>";
+				   strHTML += "<tr><td>Play Item</td><td>Repeat Count</td></tr>";
+				   for (var i=0;i<arrPlayItem.length;i++)
+				   {
+				      strHTML += "<tr>";
+					  strHTML += "<td>" + arrPlayItem[i] + " </td><td> "+ arrPlayItemChoiceCount[i]+"</td>";
+					  strHTML += "</tr>";
+				   }
+				   strHTML += "</table>";
+				   return (strHTML);
+				}
+				
+				// Function to save playlist
+function savePlaylist(format) {
+
+					if (arrPlayItem.length > 0)
+					  {
+					     var playItems = JSON.stringify(arrPlayItem);
+						 var playItemsCount = JSON.stringify(arrPlayItemChoiceCount);
+						  
+						 var userInput = '{"PlayItems": "'+btoa(playItems)+'","PlayItemsCount": "'+btoa(playItemsCount)+'"}';
+						  
+						 var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
+						  saveAs(blob, "dynamic.txt");
+					  }
+
+	
+	let playlist = []; // Replace with your actual playlist array logic
+ 
+
+
+    // Generate content based on format
+    let content = format === 'm3u' ? '#EXTM3U\n' : '';
+    playlist.forEach(item => {
+        content += `${item}\n`;
+    });
+
+    // Create and download file
+    const blob = new Blob([content], { type: format === 'm3u' ? 'audio/x-mpegurl' : 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `playlist.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+// Function to load playlist
+function loadPlaylist() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.m3u,.txt'; // Accept both M3U and TXT files
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const content = event.target.result;
+            if (file.name.endsWith('.m3u')) {
+                // Launch media player for M3U (simplified approach)
+                const url = window.URL.createObjectURL(new Blob([content], { type: 'audio/x-mpegurl' }));
+                window.location.href = url; // This may trigger the default media player if supported
+            } else if (file.name.endsWith('.txt')) {
+                // Current behavior for TXT (replace with your existing load logic)
+                console.log('Loading TXT content:', content);
+                // Add your existing TXT loading logic here (e.g., parsing and updating UI)
+            }
+        };
+
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+// Example: Simulate button click events if needed
+function btnSavePlaylist_Click() {
+    savePlaylist('m3u'); // Default to M3U for backward compatibility
+}
+
+function btnLoadPlaylist_Click() {
+    loadPlaylist();
+}
+
+
+				function btnSavePlaylist_Click()
+				{
+
+				}
+				
+				function btnLoadPlaylist_Click()
+				{
+				   $("#myFile").trigger("click");
+				}
+				
+				function ProcessSelectedFile(input)
+				{
+				   if (input.files.length > 0)
+				   {
+				      let f = input.files[0];
+				      let reader = new FileReader();
+					  reader.readAsText(f);
+					  reader.onload = function() {
+						var jsnPlayList = JSON.parse(reader.result);
+						var playItems = jsnPlayList["PlayItems"];
+						var playItemsCount = jsnPlayList["PlayItemsCount"];
+						if (playItems != 'undefined' && playItemsCount != 'undefined')
+						{
+						    arrPlayItem = atob(playItems).split(",");
+							arrPlayItemChoiceCount = atob(playItemsCount).split(",");	
+
+                            var jsnPlayItem = JSON.parse(arrPlayItem);
+							var jsnPlayItemCount = JSON.parse(arrPlayItemChoiceCount);
+							
+							arrPlayItem = [];
+							arrPlayItemChoiceCount = [];
+							
+							for (var i =0;i<jsnPlayItem.length;i++)
+							{
+							   arrPlayItem.push(jsnPlayItem[i]);
+							   arrPlayItemChoiceCount.push(jsnPlayItemCount[i]);
+							}
+						}
+    				  };
+					  reader.onerror = function() {
+						console.log(reader.error);
+					};
+				   }
+				}
+
+				$("#dlgProgressIndicator").dialog({
+					     autoOpen: false,
+						 modal:true,
+						 resizable:false,
+						 width:'auto',
+						    beforeClose: function(){
+							 if (isPassiveClose == 1)
+							 {
+							    return (true);
+							 }
+							 else 
+							 {
+							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
+								{
+								    ResetState();
+									return (true);
+								}
+							 else 
+							     return (false);
+							 }
+						 }
+					});
+
+					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
+					
+					for (var i in chantJson.chant) {
+						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
+					}
+
+					let tableHTML = "";
+
+					tableHTML += "<table id='tblMediaOwnership' style='border-style:solid;border-width:thick;'><thead><tr title='Media URL'>";
+						tableHTML += "<th>Name</th>";
+						tableHTML += "<th>Media Owner</th>";
+						tableHTML +="</tr></thead>";
+
+					tableHTML += "<tbody>";
+					chantJson.chant.forEach(function(chant) 
+					{
+						tableHTML += "<tr title='"+chant.chanturl+"''>";
+					    tableHTML +="<td>" + chant.chantname + "</td>";
+						tableHTML +="<td>" + chant.chantownership + "</td>";
+						tableHTML +="</tr>";
+					});
+
+					tableHTML +="</tbody></table>";
+
+					$("#divMediaOwnership").html(tableHTML);
+
+					$("#spnPhoneMode").click(function()
+				{
+				   var strCurrently = $("#spnPhoneMode").text();
+				   if (strCurrently	 == "To Phone")
+				   {
+				      my_jPlayer.jPlayer("volume",0.1);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"1px", 
+										 "border-style":"solid"});
+					  $("#spnPhoneMode").text("To Audio");
+				   }
+				   else if (strCurrently == "To Audio")
+				   {
+				      my_jPlayer.jPlayer("volume",0.7);
+					  $("#divTime").css({"border-color": "#FF0000", 
+										 "border-width":"0px", 
+										 "border-style":"none"});					  
+					  $("#spnPhoneMode").text("To Phone");
+				   }
+				});
+				
+				$("#spnMute").click(function ()
+				{
+				   var strCurrently = $("#spnMute").text();
+				   if (strCurrently	 == "Mute")
+				      {
+						  my_jPlayer.jPlayer("mute");
+						  $("#spnMute").text("Unmute");					  
+					  }
+				   else if (strCurrently == "Unmute")		 
+				   {
+						  my_jPlayer.jPlayer("unmute");
+						  $("#spnMute").text("Mute");					  				   
+				   }
+				});
+					
+				$(function (){
+					let table = new DataTable('#tblMediaOwnership',{
+						select: {
+								style: 'multi'
+							}
+					});
+			});
+			   
+String.prototype.repeat= function(n){
+    n= n || 1;
+    return Array(n+1).join(this);
+}
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35207111-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>
