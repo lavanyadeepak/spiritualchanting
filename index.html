@@ -24,47 +24,6 @@
                 background-color:#5E42A6;
                 color:white;
             }
-
-			.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-		.dropbtn {
-			background-color: #4CAF50;
-			color: white;
-			padding: 10px 20px;
-			border: none;
-			cursor: pointer;
-		}
-
-		.dropdown-content {
-			display: none;
-			position: absolute;
-			background-color: #f9f9f9;
-			min-width: 160px;
-			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-			z-index: 1;
-		}
-
-		.dropdown-content a {
-			color: black;
-			padding: 12px 16px;
-			text-decoration: none;
-			display: block;
-		}
-
-		.dropdown-content a:hover {
-			background-color: #f1f1f1;
-		}
-
-		.dropdown:hover .dropdown-content {
-			display: block;
-		}
-
-		.dropdown:hover .dropbtn {
-			background-color: #45a049;
-		}
         </style>
 
 	</head>
@@ -103,14 +62,9 @@
 										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
 										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
 										<input type="button" value="Play" id="btnPlaySelected" />
-<div class="dropdown">
-    <button id="btnDropdown" class="dropbtn">Playlist Actions</button>
-    <div id="dropdownContent" class="dropdown-content">
-        <a href="#" onclick="savePlaylist('m3u')">Save as M3U</a>
-        <a href="#" onclick="savePlaylist('txt')">Save as TXT</a>
-        <a href="#" onclick="loadPlaylist()">Load Playlist</a>
-    </div>
-</div>
+										<input type="button" value="Save Playlist" id="btnSavePlaylist" onClick="btnSavePlaylist_Click()" />
+										<input type="button" value="Load Playlist" id="btnLoadPlaylist" onClick="btnLoadPlaylist_Click()"/>										
+							
 										<div id="divPlayList">
 																			
 								    	</div>
@@ -416,10 +370,9 @@
 				   return (strHTML);
 				}
 				
-				// Function to save playlist
-function savePlaylist(format) {
-
-					if (arrPlayItem.length > 0)
+				function btnSavePlaylist_Click()
+				{
+				      if (arrPlayItem.length > 0)
 					  {
 					     var playItems = JSON.stringify(arrPlayItem);
 						 var playItemsCount = JSON.stringify(arrPlayItemChoiceCount);
@@ -429,70 +382,6 @@ function savePlaylist(format) {
 						 var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
 						  saveAs(blob, "dynamic.txt");
 					  }
-
-	
-	let playlist = []; // Replace with your actual playlist array logic
- 
-
-
-    // Generate content based on format
-    let content = format === 'm3u' ? '#EXTM3U\n' : '';
-    playlist.forEach(item => {
-        content += `${item}\n`;
-    });
-
-    // Create and download file
-    const blob = new Blob([content], { type: format === 'm3u' ? 'audio/x-mpegurl' : 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `playlist.${format}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-}
-
-// Function to load playlist
-function loadPlaylist() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.m3u,.txt'; // Accept both M3U and TXT files
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const content = event.target.result;
-            if (file.name.endsWith('.m3u')) {
-                // Launch media player for M3U (simplified approach)
-                const url = window.URL.createObjectURL(new Blob([content], { type: 'audio/x-mpegurl' }));
-                window.location.href = url; // This may trigger the default media player if supported
-            } else if (file.name.endsWith('.txt')) {
-                // Current behavior for TXT (replace with your existing load logic)
-                console.log('Loading TXT content:', content);
-                // Add your existing TXT loading logic here (e.g., parsing and updating UI)
-            }
-        };
-
-        reader.readAsText(file);
-    };
-    input.click();
-}
-
-// Example: Simulate button click events if needed
-function btnSavePlaylist_Click() {
-    savePlaylist('m3u'); // Default to M3U for backward compatibility
-}
-
-function btnLoadPlaylist_Click() {
-    loadPlaylist();
-}
-
-
-				function btnSavePlaylist_Click()
-				{
-
 				}
 				
 				function btnLoadPlaylist_Click()
