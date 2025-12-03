@@ -17,6 +17,7 @@
 		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
 		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
 		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
+		<link href="./css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css" />
 
         <style type="text/css">
             select,input, #divTime{
@@ -34,6 +35,7 @@
 					<nav>
 						<ul>
 							<li><a href="#intro">Chanting</a></li>
+							<li><a href="#copyright">Media Ownership</a></li>
                             <li><a href="#two">History</a></li>
 							<li><a href="#three">Get in touch</a></li>
 						</ul>
@@ -50,7 +52,7 @@
 							<div id="contact-form" class="clearfix">
 									<label for="name">Chant: </label>
 												<Select Id="drpChant" name="drpChant">
-												  
+						                           <option value="-1080">--Select a Chant--</option>						  
 												</Select>
 												<br>
 										<label for="email">Chant Count</label>
@@ -59,7 +61,9 @@
 										<br><br>
 										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
 										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
-										<input type="button" value="Play" id="btnPlaySelected" />	
+										<input type="button" value="Play" id="btnPlaySelected" />
+										<input type="button" value="Save Playlist" id="btnSavePlaylist" onClick="btnSavePlaylist_Click()" />
+										<input type="button" value="Load Playlist" id="btnLoadPlaylist" onClick="btnLoadPlaylist_Click()"/>										
 							
 										<div id="divPlayList">
 																			
@@ -73,6 +77,15 @@
 																				
 							    
 							</div>
+						</div>
+					</section>
+
+					
+					<section id="copyright" class="wrapper style1 fade-up" style="color:white;">
+						<div class="inner" style="padding-top:25%;">
+                             <div id="divMediaOwnership">
+
+							 </div>							
 						</div>
 					</section>
 
@@ -93,19 +106,7 @@
 					<section id="three" class="wrapper style1 fade-up" style="color:white;">
 						<div class="inner" style="padding-top:10%;">
 							<h2>Get in touch</h2>
-							<p>deepak.vasudevan (at) outlook.com</p>
-							
-							<h2>Web Hosting Courtesy</h2>
-							<p>
-							   <Ul>
-                                  <li><a href="http://www.000webhost.com/">000WebHost</a></li>
-                                </Ul>
-							</p>
-							
-							<h2>Media Sponsors</h2>
-							<p>
-							  SSRF
-							</p>
+							<p>Click <a href="https://lavanyadeepak.github.io/#contact">here</a></p>
 
 							<h2>Download Source Code</h2>
 							<p>
@@ -120,7 +121,7 @@
 			<footer id="footer" class="wrapper style1-alt">
 				<div class="inner">
 					<ul class="menu">
-						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>&copy; Deepak Kumar Vasudevan. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
 					</ul>
 				</div>
 			</footer>
@@ -143,6 +144,10 @@
 				    <td><span id="spnPhoneMode">To Phone</span></td>
                     <td><span id="spnMute">Mute</span></td>
 				 </tr>
+				 <tr id="trCurrentCount" style="display:none;">
+				    <td colspan="2">
+					    Current Count:<span id="spnCurrentCount"></span> of <span id="spnTotalCount"></span>
+					</td>
 				 <tr>
 				    <td colspan="2">
 					      <div class="meter green nostripes"> 
@@ -154,6 +159,9 @@
 			  </table>
 			</div>
  
+            <div style="visibility:none;">
+			    <input type="file" id="myFile" onchange="ProcessSelectedFile(this)">
+			</div>
 
 
 		<!-- Scripts -->
@@ -171,7 +179,11 @@
 			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
 			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
             <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="FileSaver.js"></script>
 			<script type="text/javascript" src="./chant.json"></script>
+			<script type="text/javascript" src="./scripts/dataTables.min.js"></script>
+			<script type="text/javascript" src="./scripts/dataTables.select.js"></script>
+			<script type="text/javascript" src="./scripts/select.dataTables.js"></script>
 			<script type="text/javascript">
                 
 				var arrPlayItem = [];
@@ -201,8 +213,14 @@
 						timeupdate: function(event) {
 			
 						},
-						play: function(event) {						      
+						play: function(event) {		
 						   DisplayProgress();
+								if (arrMasterPlayList.length > 0)
+								{
+									$("#trCurrentCount").css("display","block");
+									$("#spnCurrentCount").text(intCurrentPlayIndex + 1);
+									$("#spnTotalCount").text($("#txtCount").val());
+								}
      					},
 						pause: function(event) {
 						},
@@ -222,6 +240,12 @@
 							   isPassiveClose = 1;
 							   $("#dlgProgressIndicator").dialog("close");
 							   ResetState();
+							   	if (arrMasterPlayList.length < 1)
+								{
+									$("#trCurrentCount").css("display","none");
+									$("#spnCurrentCount").text("");
+									$("#spnTotalCount").text("");
+								}
 							}
 						},
 						error: function (event) {
@@ -235,7 +259,13 @@
 				
 				$("#btnAddToPlayList").bind("click", function (){
 				   var strCurrentItem = $("#drpChant").val();
-				   if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
+				   if (strCurrentItem < 0)
+				   {
+				      //Do Nothing
+				   }
+				   else 
+				   {
+				       if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
 				   {
 				      strCurrentItem = strCurrentItem.split("__")[1];
 					  var arrItems = strCurrentItem.split(",");
@@ -266,7 +296,8 @@
 				   {
 				      arrPlayItem.push($("#drpChant").val());
 					  arrPlayItemChoiceCount.push($("#txtCount").val());
-				   }
+				   }  
+				 } 
 				});
 				
 				$("#btnResetPlaylist").bind("click", function (){
@@ -312,6 +343,8 @@
 				     $("#btnResetPlaylist").trigger("click");
 					 isPassiveClose = 0;
                      intCurrentPlayIndex =0;
+					 $('select#drpChant').prop('selectedIndex', 0);
+					 $('#txtCount').val(1);
 				}
 				
 				function DisplayProgress()
@@ -336,9 +369,62 @@
 				   strHTML += "</table>";
 				   return (strHTML);
 				}
+				
+				function btnSavePlaylist_Click()
+				{
+				      if (arrPlayItem.length > 0)
+					  {
+					     var playItems = JSON.stringify(arrPlayItem);
+						 var playItemsCount = JSON.stringify(arrPlayItemChoiceCount);
+						  
+						 var userInput = '{"PlayItems": "'+btoa(playItems)+'","PlayItemsCount": "'+btoa(playItemsCount)+'"}';
+						  
+						 var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
+						  saveAs(blob, "dynamic.txt");
+					  }
+				}
+				
+				function btnLoadPlaylist_Click()
+				{
+				   $("#myFile").trigger("click");
+				}
+				
+				function ProcessSelectedFile(input)
+				{
+				   if (input.files.length > 0)
+				   {
+				      let f = input.files[0];
+				      let reader = new FileReader();
+					  reader.readAsText(f);
+					  reader.onload = function() {
+						var jsnPlayList = JSON.parse(reader.result);
+						var playItems = jsnPlayList["PlayItems"];
+						var playItemsCount = jsnPlayList["PlayItemsCount"];
+						if (playItems != 'undefined' && playItemsCount != 'undefined')
+						{
+						    arrPlayItem = atob(playItems).split(",");
+							arrPlayItemChoiceCount = atob(playItemsCount).split(",");	
 
-			   $(function (){
-					$("#dlgProgressIndicator").dialog({
+                            var jsnPlayItem = JSON.parse(arrPlayItem);
+							var jsnPlayItemCount = JSON.parse(arrPlayItemChoiceCount);
+							
+							arrPlayItem = [];
+							arrPlayItemChoiceCount = [];
+							
+							for (var i =0;i<jsnPlayItem.length;i++)
+							{
+							   arrPlayItem.push(jsnPlayItem[i]);
+							   arrPlayItemChoiceCount.push(jsnPlayItemCount[i]);
+							}
+						}
+    				  };
+					  reader.onerror = function() {
+						console.log(reader.error);
+					};
+				   }
+				}
+
+				$("#dlgProgressIndicator").dialog({
 					     autoOpen: false,
 						 modal:true,
 						 resizable:false,
@@ -351,20 +437,43 @@
 							 else 
 							 {
 							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
-							     return (true);
+								{
+								    ResetState();
+									return (true);
+								}
 							 else 
 							     return (false);
 							 }
 						 }
 					});
-					
+
 					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
 					
 					for (var i in chantJson.chant) {
 						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
 					}
-				
-				$("#spnPhoneMode").click(function()
+
+					let tableHTML = "";
+
+					tableHTML += "<table id='tblMediaOwnership' style='border-style:solid;border-width:thick;'><thead><tr title='Media URL'>";
+						tableHTML += "<th>Name</th>";
+						tableHTML += "<th>Media Owner</th>";
+						tableHTML +="</tr></thead>";
+
+					tableHTML += "<tbody>";
+					chantJson.chant.forEach(function(chant) 
+					{
+						tableHTML += "<tr title='"+chant.chanturl+"''>";
+					    tableHTML +="<td>" + chant.chantname + "</td>";
+						tableHTML +="<td>" + chant.chantownership + "</td>";
+						tableHTML +="</tr>";
+					});
+
+					tableHTML +="</tbody></table>";
+
+					$("#divMediaOwnership").html(tableHTML);
+
+					$("#spnPhoneMode").click(function()
 				{
 				   var strCurrently = $("#spnPhoneMode").text();
 				   if (strCurrently	 == "To Phone")
@@ -399,7 +508,13 @@
 						  $("#spnMute").text("Mute");					  				   
 				   }
 				});
-	
+					
+				$(function (){
+					let table = new DataTable('#tblMediaOwnership',{
+						select: {
+								style: 'multi'
+							}
+					});
 			});
 			   
 String.prototype.repeat= function(n){
