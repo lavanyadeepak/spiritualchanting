@@ -1,541 +1,925 @@
 <!DOCTYPE HTML>
-<!--
-	Hyperspace by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
-	<head>
-		<title>Chanting Utility</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-		<link href="./css/jplayer.css" rel="stylesheet" type="text/css" />
-		<link href="./css/jquery-ui.css" rel="stylesheet" type="text/css" />
-		<link href="./css/theme.css" rel="stylesheet" type="text/css" />
-		<link href="./css/progressbar.css" rel="stylesheet" type="text/css" />
-		<link href="./css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css" />
+  <head>
+    <title>Chanting Utility</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.3.1/css/rowGroup.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* Mobile-first responsive design */
+      body {
+        margin: 0;
+        padding: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        overflow: hidden;
+      }
+      
+      /* Audio Player Section */
+      .audio-player {
+        background: linear-gradient(135deg, #4a6fa5 0%, #3a5a8a 100%);
+        color: white;
+        padding: 20px;
+        display: none;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        border-bottom: 3px solid #ffd166;
+      }
+      
+      .audio-player.active {
+        display: flex;
+        animation: slideDown 0.3s ease;
+      }
+      
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .player-info {
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      .player-info h3 {
+        margin: 0 0 5px 0;
+        font-size: 1.2rem;
+        color: #ffd166;
+      }
+      
+      .player-info p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+      
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      
+      .player-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .player-btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.05);
+      }
+      
+      .player-btn.play {
+        background: #28a745;
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+      
+      .player-btn.play:hover {
+        background: #218838;
+      }
+      
+      .progress-container {
+        flex: 1;
+        min-width: 200px;
+        max-width: 400px;
+      }
+      
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 3px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      
+      .progress {
+        height: 100%;
+        background: #ffd166;
+        width: 0%;
+        transition: width 0.1s;
+      }
+      
+      .time-display {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        opacity: 0.8;
+      }
+      
+      .volume-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .volume-slider {
+        width: 80px;
+      }
+      
+      .header {
+        background: linear-gradient(135deg, #4a6fa5 0%, #3a5a8a 100%);
+        color: white;
+        padding: 25px 20px;
+        text-align: center;
+      }
+      
+      .header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+      
+      .header p {
+        margin: 10px 0 0;
+        opacity: 0.9;
+        font-size: 1rem;
+      }
+      
+      .controls {
+        padding: 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      /* Group header styling */
+      table.dataTable tbody tr.group {
+        background: linear-gradient(to right, #4a6fa5, #5a7ab5) !important;
+        color: white !important;
+        cursor: pointer;
+        font-weight: 600;
+        border-left: 4px solid #ffd166;
+      }
+      
+      table.dataTable tbody tr.group td {
+        color: white !important;
+        padding: 16px 12px !important;
+        font-size: 1.1rem !important;
+        white-space: normal !important;
+      }
+      
+      .group .toggle-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        text-align: center;
+        margin-right: 10px;
+        transition: transform 0.3s;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        line-height: 24px;
+        font-size: 12px;
+      }
+      
+      .group.collapsed .toggle-icon {
+        transform: rotate(-90deg);
+      }
+      
+      /* Selected row styling */
+      table.dataTable tbody tr.selected {
+        background-color: #e8f4ff !important;
+        border-left: 4px solid #4a6fa5;
+      }
+      
+      table.dataTable tbody tr.selected td {
+        font-weight: 600;
+        color: #2c3e50;
+      }
+      
+      /* Play button in table */
+      .row-play-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #4a6fa5;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+      }
+      
+      .row-play-btn:hover {
+        background: #3a5a8a;
+        transform: scale(1.05);
+      }
+      
+      .row-play-btn.playing {
+        background: #28a745;
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+      }
+      
+      /* Mobile buttons */
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        flex: 1;
+        min-width: 140px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      
+      .btn-primary {
+        background: #4a6fa5;
+        color: white;
+      }
+      
+      .btn-primary:hover {
+        background: #3a5a8a;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+      
+      .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      
+      /* Mobile-optimized table */
+      .dataTables_wrapper {
+        padding: 0 !important;
+      }
+      
+      table.dataTable tbody tr:not(.group) td {
+        padding: 14px 12px !important;
+        font-size: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      
+      table.dataTable tbody tr:not(.group):hover {
+        background-color: #f8f9fa !important;
+      }
+      
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-size: 0.9rem;
+        border-top: 1px solid #eee;
+        background: #f8f9fa;
+      }
+      
+      /* Mobile responsive */
+      @media (max-width: 768px) {
+        .audio-player {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+          padding: 15px;
+        }
+        
+        .player-controls {
+          justify-content: center;
+        }
+        
+        .progress-container {
+          min-width: 100%;
+        }
+        
+        .header h1 {
+          font-size: 1.5rem;
+        }
+        
+        .controls {
+          flex-direction: column;
+        }
+        
+        .btn {
+          width: 100%;
+        }
+        
+        .player-btn {
+          width: 45px;
+          height: 45px;
+        }
+        
+        .player-btn.play {
+          width: 55px;
+          height: 55px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        body {
+          padding: 5px;
+        }
+        
+        .header {
+          padding: 20px 15px;
+        }
+        
+        .header h1 {
+          font-size: 1.3rem;
+        }
+        
+        .row-play-btn {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Audio Player -->
+      <div class="audio-player" id="audioPlayer">
+        <div class="player-info">
+          <h3 id="nowPlayingTitle">No chant selected</h3>
+          <p id="nowPlayingCategory">Select a chant to play</p>
+        </div>
+        
+        <div class="player-controls">
+          <button class="player-btn" id="prevBtn" title="Previous">
+            <i class="fas fa-step-backward"></i>
+          </button>
+          <button class="player-btn play" id="playPauseBtn" title="Play/Pause">
+            <i class="fas fa-play" id="playIcon"></i>
+          </button>
+          <button class="player-btn" id="nextBtn" title="Next">
+            <i class="fas fa-step-forward"></i>
+          </button>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+          </div>
+          <div class="time-display">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+        
+        <div class="volume-container">
+          <i class="fas fa-volume-up" style="color: white;"></i>
+          <input type="range" min="0" max="1" step="0.1" value="0.7" class="volume-slider" id="volumeSlider">
+        </div>
+      </div>
+      
+      <!-- Header -->
+      <div class="header">
+        <h1><i class="fas fa-om"></i> Chanting Utility</h1>
+        <p>Divine chants for meditation and devotion</p>
+      </div>
+      
+      <!-- Controls -->
+      <div class="controls">
+        <button id="expandAll" class="btn btn-primary">
+          <i class="fas fa-expand"></i> Expand All
+        </button>
+        <button id="collapseAll" class="btn btn-secondary">
+          <i class="fas fa-compress"></i> Collapse All
+        </button>
+        <button id="stopPlayer" class="btn" style="background:#dc3545;color:white;">
+          <i class="fas fa-stop"></i> Stop Player
+        </button>
+      </div>
+      
+      <!-- DataTable -->
+      <table id="myTable" class="display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Chant Name</th>
+            <th style="display:none">Category</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      
+      <!-- Footer -->
+      <div class="footer">
+        <div>Total chants: <span id="totalCount">0</span> • Groups: <span id="groupCount">0</span></div>
+        <div style="margin-top: 8px; font-size: 0.85rem; color: #4a6fa5;">
+          <i class="fas fa-info-circle"></i> Click any chant to play | Click group headers to expand/collapse
+        </div>
+      </div>
+    </div>
 
-        <style type="text/css">
-            select,input, #divTime{
-                background-color:#5E42A6;
-                color:white;
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.3.1/js/dataTables.rowGroup.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Audio player variables
+        let audioPlayer = null;
+        let currentChantIndex = -1;
+        let currentChants = [];
+        let isPlaying = false;
+        
+        // Initialize audio player
+        function initAudioPlayer() {
+          audioPlayer = new Audio();
+          audioPlayer.preload = 'metadata';
+          
+          // Update progress bar
+          audioPlayer.addEventListener('timeupdate', function() {
+            if (audioPlayer.duration) {
+              const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+              $('#progress').css('width', progress + '%');
+              
+              // Update time display
+              $('#currentTime').text(formatTime(audioPlayer.currentTime));
+              $('#duration').text(formatTime(audioPlayer.duration));
             }
-        </style>
+          });
+          
+          // Handle audio end
+          audioPlayer.addEventListener('ended', function() {
+            isPlaying = false;
+            $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+            $('.row-play-btn.playing').removeClass('playing');
+            
+            // Auto-play next chant if available
+            setTimeout(playNextChant, 1000);
+          });
+          
+          // Handle volume change
+          $('#volumeSlider').on('input', function() {
+            audioPlayer.volume = $(this).val();
+          });
+        }
+        
+        // Format time in MM:SS
+        function formatTime(seconds) {
+          const mins = Math.floor(seconds / 60);
+          const secs = Math.floor(seconds % 60);
+          return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Play a specific chant
+        function playChant(chantData, rowIndex) {
+          if (!chantData || !chantData.chanturl) return;
+          
+          // Update UI
+          $('#nowPlayingTitle').text(chantData.chantname);
+          $('#nowPlayingCategory').text(chantData.category);
+          $('#audioPlayer').addClass('active');
+          
+          // Update selected row
+          $('tr.selected').removeClass('selected');
+          $('tr').eq(rowIndex).addClass('selected');
+          $('.row-play-btn.playing').removeClass('playing');
+          $(`.row-play-btn[data-index="${rowIndex}"]`).addClass('playing');
+          
+          // Set and play audio
+          audioPlayer.src = chantData.chanturl;
+          audioPlayer.play();
+          isPlaying = true;
+          $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+          
+          // Update current index
+          currentChantIndex = rowIndex;
+        }
+        
+        // Play next chant
+        function playNextChant() {
+          if (currentChants.length === 0) return;
+          
+          let nextIndex = currentChantIndex + 1;
+          if (nextIndex >= currentChants.length) {
+            nextIndex = 0; // Loop back to start
+          }
+          
+          const nextChant = currentChants[nextIndex];
+          if (nextChant) {
+            playChant(nextChant, nextIndex);
+          }
+        }
+        
+        // Play previous chant
+        function playPreviousChant() {
+          if (currentChants.length === 0) return;
+          
+          let prevIndex = currentChantIndex - 1;
+          if (prevIndex < 0) {
+            prevIndex = currentChants.length - 1; // Loop to end
+          }
+          
+          const prevChant = currentChants[prevIndex];
+          if (prevChant) {
+            playChant(prevChant, prevIndex);
+          }
+        }
+        
+        // Toggle play/pause
+        function togglePlayPause() {
+          if (!audioPlayer.src) return;
+          
+          if (isPlaying) {
+            audioPlayer.pause();
+            $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+          } else {
+            audioPlayer.play();
+            $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+          }
+          isPlaying = !isPlaying;
+        }
+        
+        // Stop player
+        function stopPlayer() {
+          if (audioPlayer) {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+          }
+          isPlaying = false;
+          $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+          $('#audioPlayer').removeClass('active');
+          $('.row-play-btn.playing').removeClass('playing');
+          $('tr.selected').removeClass('selected');
+        }
+        
+        // Initialize audio player
+        initAudioPlayer();
+        
+        // Load chants data
+        $.getJSON("chants.json", function(data) {
+          currentChants = data;
+          
+          // Update counters
+          $('#totalCount').text(data.length);
+          const uniqueCategories = [...new Set(data.map(item => item.category))];
+          $('#groupCount').text(uniqueCategories.length);
+          
+          // Build table rows
+          const rows = data.map((item, index) => `
+            <tr data-index="${index}" data-category="${item.category}">
+              <td>${item.chantname}</td>
+              <td style="display:none">${item.category}</td>
+              <td>
+                <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
+                  <i class="fas fa-play"></i> Play
+                </button>
+              </td>
+            </tr>
+          `).join("");
+          $("#myTable tbody").html(rows);
 
-	</head>
-	<body>
-
-		<!-- Sidebar -->
-			<section id="sidebar">
-				<div class="inner">
-					<nav>
-						<ul>
-							<li><a href="#intro">Chanting</a></li>
-							<li><a href="#copyright">Media Ownership</a></li>
-                            <li><a href="#two">History</a></li>
-							<li><a href="#three">Get in touch</a></li>
-						</ul>
-					</nav>
-				</div>
-			</section>
-
-		<!-- Wrapper -->
-			<div id="wrapper">
-
-				<!-- Intro -->
-					<section id="intro" class="wrapper style1 fullscreen fade-up">
-						<div class="inner">
-							<div id="contact-form" class="clearfix">
-									<label for="name">Chant: </label>
-												<Select Id="drpChant" name="drpChant">
-						                           <option value="-1080">--Select a Chant--</option>						  
-												</Select>
-												<br>
-										<label for="email">Chant Count</label>
-										<input type="number" min="1" max="20" step="1" value="1" id="txtCount" name="txtCount" required>
-									 
-										<br><br>
-										<input type="button" value="Add To Playlist" id="btnAddToPlayList" />
-										<input type="button" value="Reset Playlist" id="btnResetPlaylist" />
-										<input type="button" value="Play" id="btnPlaySelected" />
-										<input type="button" value="Save Playlist" id="btnSavePlaylist" onClick="btnSavePlaylist_Click()" />
-										<input type="button" value="Load Playlist" id="btnLoadPlaylist" onClick="btnLoadPlaylist_Click()"/>										
-							
-										<div id="divPlayList">
-																			
-								    	</div>
-										
-										<br>
-											<section>
-													<div id="jquery_jplayer"></div>
-													<div id="jplayer_inspector"></div>
-												</section>						
-																				
-							    
-							</div>
-						</div>
-					</section>
-
-					
-					<section id="copyright" class="wrapper style1 fade-up" style="color:white;">
-						<div class="inner" style="padding-top:25%;">
-                             <div id="divMediaOwnership">
-
-							 </div>							
-						</div>
-					</section>
-
-				<!-- One -->
-                <section id="two" class="wrapper style1 fade-up" style="color:white;">
-                    <div class="inner" style="padding-top:25%;">
-                        This small Jquery/JPlayer Utility, I humbly hope, would help people to do their chanting efficiently. 
-                        I dedicate this to the service of SSRF Inc. and attribute credits to my gurudev (Shanidev) for helping me get this in place on the first day of Mahalaya Paksham 2012.<br /><br />
-
-                        Definitely there is no copyright infringements or commercial benefits to the publisher or the host. We have tried to gather the media from available public domain for the benefit of the community.<br /><br />
-
-                        We have used HTML5/JQuery technology that is best rendered on Google Chrome and latest versions of Internet Explorer and Firefox. Mobile devices of similar family should render them fine as well.
-                    </div>
-                </section>
-
-
-				<!-- Three -->
-					<section id="three" class="wrapper style1 fade-up" style="color:white;">
-						<div class="inner" style="padding-top:10%;">
-							<h2>Get in touch</h2>
-							<p>Click <a href="https://lavanyadeepak.github.io/#contact">here</a></p>
-
-							<h2>Download Source Code</h2>
-							<p>
-							  You can download the source code of this utility for offline viewing and customization <a href="https://github.com/lavanyadeepak/spiritualchanting">here</a>.
-							</p>							
-						</div>
-					</section>
-
-			</div>
-
-		<!-- Footer -->
-			<footer id="footer" class="wrapper style1-alt">
-				<div class="inner">
-					<ul class="menu">
-						<li>&copy; Deepak Kumar Vasudevan. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</div>
-			</footer>
-
-			<div id="dlgProgressIndicator" title="Chanting In Progress">
-			  <table id="tblPlayItem">
-			     <tr>
-				     <td>Selected Chant</td>
-					 <td id="divSelectedChant"></td>
-				 </tr>
-			     <tr>
-				     <td>Chant Composition</td>
-					 <td id="divChantComposition"></td>
-				 </tr>				 
-				<tr>
-				     <td>Current Avruthi</td>
-					 <td id="divCurrentAvruthi"></td>
-				 </tr>
-				 <tr>
-				    <td><span id="spnPhoneMode">To Phone</span></td>
-                    <td><span id="spnMute">Mute</span></td>
-				 </tr>
-				 <tr id="trCurrentCount" style="display:none;">
-				    <td colspan="2">
-					    Current Count:<span id="spnCurrentCount"></span> of <span id="spnTotalCount"></span>
-					</td>
-				 <tr>
-				    <td colspan="2">
-					      <div class="meter green nostripes"> 
-							<span id="progress" style="width: 0%"></span>
-							<div id="labelProg">0%</div>
-						</div>
-					</td>
-				 </tr>
-			  </table>
-			</div>
- 
-            <div style="visibility:none;">
-			    <input type="file" id="myFile" onchange="ProcessSelectedFile(this)">
-			</div>
-
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="scripts/jquery-migrate-1.4.1.js"></script>
-			<script src="scripts/lodash.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/skel.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="assets/js/main.js"></script>
-			<script type="text/javascript" src="./scripts/jquery.jplayer.min.js"></script>
-			<script type="text/javascript" src="./scripts/jplayer.playlist.min.js"></script>
-			<script type="text/javascript" src="./scripts/jquery.jplayer.inspector.js"></script>
-			<script type="text/javascript" src="./scripts/jquery-ui-1.8.24.custom.min.js"></script>
-            <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
-			<script type="text/javascript" src="FileSaver.js"></script>
-			<script type="text/javascript" src="./chant.json"></script>
-			<script type="text/javascript" src="./scripts/dataTables.min.js"></script>
-			<script type="text/javascript" src="./scripts/dataTables.select.js"></script>
-			<script type="text/javascript" src="./scripts/select.dataTables.js"></script>
-			<script type="text/javascript">
-                
-				var arrPlayItem = [];
-				var arrPlayItemChoiceCount = [];
-                var arrMasterPlayList = [];
-				var intCurrentPlayIndex = 0;
-				var my_jPlayer = $("#jquery_jplayer");
-				my_jPlayer.jPlayer("volume",0.7);
-				var	opt_play_first = false, 
-				opt_auto_play = true, 
-				opt_text_playing = 
-				opt_text_selected = "Track selected"; 
-				var isPassiveClose = 0;
-				
-				var first_track = true;
-
-				$.jPlayer.timeFormat.padMin = false;
-				$.jPlayer.timeFormat.padSec = false;
-				$.jPlayer.timeFormat.sepMin = " min ";
-				$.jPlayer.timeFormat.sepSec = " sec";
-					
-					my_jPlayer.jPlayer({
-						errorAlerts: true,
-						volume: "1",
-						ready: function () {
-						},
-						timeupdate: function(event) {
-			
-						},
-						play: function(event) {		
-						   DisplayProgress();
-								if (arrMasterPlayList.length > 0)
-								{
-									$("#trCurrentCount").css("display","block");
-									$("#spnCurrentCount").text(intCurrentPlayIndex + 1);
-									$("#spnTotalCount").text($("#txtCount").val());
-								}
-     					},
-						pause: function(event) {
-						},
-						ended: function(event) {
-							intCurrentPlayIndex++;
-							if (intCurrentPlayIndex < arrMasterPlayList.length)
-							{
-								$("#divSelectedChant").html($("#drpChant option:selected").text());
-								$("#divChantComposition").html(GetPlayItemHTML());
-								$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
-				
-							   my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
-							   my_jPlayer.jPlayer("play");
-							}
-							else 
-							{
-							   isPassiveClose = 1;
-							   $("#dlgProgressIndicator").dialog("close");
-							   ResetState();
-							   	if (arrMasterPlayList.length < 1)
-								{
-									$("#trCurrentCount").css("display","none");
-									$("#spnCurrentCount").text("");
-									$("#spnTotalCount").text("");
-								}
-							}
-						},
-						error: function (event) {
-							
-						},
-							swfPath: "./scripts/",
-							cssSelectorAncestor: "#jp_container",
-							supplied: "mp3",
-							wmode: "window"
-					});
-				
-				$("#btnAddToPlayList").bind("click", function (){
-				   var strCurrentItem = $("#drpChant").val();
-				   if (strCurrentItem < 0)
-				   {
-				      //Do Nothing
-				   }
-				   else 
-				   {
-				       if (strCurrentItem.indexOf("SPECIALPROCESSING_") > -1)
-				   {
-				      strCurrentItem = strCurrentItem.split("__")[1];
-					  var arrItems = strCurrentItem.split(",");
-					  for (var i=0;i<arrItems.length;i++)
-					  {
-							var eachItem = arrItems[i].split(":");
-							var iteratorValue = eachItem[1] == "n"?$("#txtCount").val():eachItem[1];
-							arrPlayItem.push(eachItem[0]);
-							arrPlayItemChoiceCount.push(iteratorValue);	
-					  }
-				   }
-				   else if (strCurrentItem.indexOf("BUILD_") > -1) 
-				   {
-				      alert ('Available in next version');
-				      /*
-				      strCurrentItem = strCurrentItem.split("__")[1];
-					  var arrPlayComponents = strCurrentItem.split("_");
-					  
-					  for (var i=arrPlayComponents[1];i<arrPlayComponents[2];i++)
-					  {
-					     var strPlayItem = arrPlayComponents[0]+arrPlayComponents[3]+arrPlayComponents[i];
-						 console.log (strPlayItem);
-					  }
-					  */
-					  //0 Path 1 2 lbound ubound 3 filename.mp3
-				   }
-				   else 
-				   {
-				      arrPlayItem.push($("#drpChant").val());
-					  arrPlayItemChoiceCount.push($("#txtCount").val());
-				   }  
-				 } 
-				});
-				
-				$("#btnResetPlaylist").bind("click", function (){
-				   arrPlayItem = [];
-				   arrPlayItemChoiceCount = [];
-				   arrMasterPlayList = [];
-				});
-				
-				$("#btnPlaySelected").bind("click", function(){
-	                if (arrPlayItem.length < 1)
-					{
-					   alert ("Please add a few items into playlist to proceed");
-					}					
-					else 
-					{
-					   for (var i=0;i<arrPlayItem.length;i++)
-						{
-							if (arrPlayItem[i].length < 1)
-							   continue;
-							else 
-							{
-							   for (var j=0;j<arrPlayItemChoiceCount[i];j++)
-							   {
-								  arrMasterPlayList.push(arrPlayItem[i]);
-							   }
-							}
-						}
-						
-						$("#divSelectedChant").html($("#drpChant option:selected").text());
-						$("#divChantComposition").html(GetPlayItemHTML());
-						$("#divCurrentAvruthi").html(arrMasterPlayList[intCurrentPlayIndex]);
-						
-						$("#dlgProgressIndicator").dialog("open");
-						my_jPlayer.jPlayer("setMedia", {mp3: arrMasterPlayList[intCurrentPlayIndex]});   
-						DisplayProgress();
-						my_jPlayer.jPlayer("play");
-					}
-				});
-				
-				function ResetState()
-				{
-					 my_jPlayer.jPlayer("stop");
-				     $("#btnResetPlaylist").trigger("click");
-					 isPassiveClose = 0;
-                     intCurrentPlayIndex =0;
-					 $('select#drpChant').prop('selectedIndex', 0);
-					 $('#txtCount').val(1);
-				}
-				
-				function DisplayProgress()
-				{
-				    var percentage = 0;
-					percentage = Math.round((intCurrentPlayIndex/arrMasterPlayList.length)*100);
-					$("#progress").css('background', 'green');
-					$("#progress").css("width", percentage + "%");
-					$("#labelProg").text(percentage + "%");
-				}
-				
-				function GetPlayItemHTML()
-				{
-				   var strHTML = "<table>";
-				   strHTML += "<tr><td>Play Item</td><td>Repeat Count</td></tr>";
-				   for (var i=0;i<arrPlayItem.length;i++)
-				   {
-				      strHTML += "<tr>";
-					  strHTML += "<td>" + arrPlayItem[i] + " </td><td> "+ arrPlayItemChoiceCount[i]+"</td>";
-					  strHTML += "</tr>";
-				   }
-				   strHTML += "</table>";
-				   return (strHTML);
-				}
-				
-				function btnSavePlaylist_Click()
-				{
-				      if (arrPlayItem.length > 0)
-					  {
-					     var playItems = JSON.stringify(arrPlayItem);
-						 var playItemsCount = JSON.stringify(arrPlayItemChoiceCount);
-						  
-						 var userInput = '{"PlayItems": "'+btoa(playItems)+'","PlayItemsCount": "'+btoa(playItemsCount)+'"}';
-						  
-						 var blob = new Blob([userInput], { type: "text/plain;charset=utf-8" });
-						  saveAs(blob, "dynamic.txt");
-					  }
-				}
-				
-				function btnLoadPlaylist_Click()
-				{
-				   $("#myFile").trigger("click");
-				}
-				
-				function ProcessSelectedFile(input)
-				{
-				   if (input.files.length > 0)
-				   {
-				      let f = input.files[0];
-				      let reader = new FileReader();
-					  reader.readAsText(f);
-					  reader.onload = function() {
-						var jsnPlayList = JSON.parse(reader.result);
-						var playItems = jsnPlayList["PlayItems"];
-						var playItemsCount = jsnPlayList["PlayItemsCount"];
-						if (playItems != 'undefined' && playItemsCount != 'undefined')
-						{
-						    arrPlayItem = atob(playItems).split(",");
-							arrPlayItemChoiceCount = atob(playItemsCount).split(",");	
-
-                            var jsnPlayItem = JSON.parse(arrPlayItem);
-							var jsnPlayItemCount = JSON.parse(arrPlayItemChoiceCount);
-							
-							arrPlayItem = [];
-							arrPlayItemChoiceCount = [];
-							
-							for (var i =0;i<jsnPlayItem.length;i++)
-							{
-							   arrPlayItem.push(jsnPlayItem[i]);
-							   arrPlayItemChoiceCount.push(jsnPlayItemCount[i]);
-							}
-						}
-    				  };
-					  reader.onerror = function() {
-						console.log(reader.error);
-					};
-				   }
-				}
-
-				$("#dlgProgressIndicator").dialog({
-					     autoOpen: false,
-						 modal:true,
-						 resizable:false,
-						 width:'auto',
-						    beforeClose: function(){
-							 if (isPassiveClose == 1)
-							 {
-							    return (true);
-							 }
-							 else 
-							 {
-							    if (window.confirm('Closing the dialog will stop and reset the chanting'))
-								{
-								    ResetState();
-									return (true);
-								}
-							 else 
-							     return (false);
-							 }
-						 }
-					});
-
-					chantJson.chant = _.sortBy(chantJson.chant, "chantname");
-					
-					for (var i in chantJson.chant) {
-						$("#drpChant").append("<option value='" + chantJson.chant[i].chanturl + "'>" + chantJson.chant[i].chantname + "</option>");
-					}
-
-					let tableHTML = "";
-
-					tableHTML += "<table id='tblMediaOwnership' style='border-style:solid;border-width:thick;'><thead><tr title='Media URL'>";
-						tableHTML += "<th>Name</th>";
-						tableHTML += "<th>Media Owner</th>";
-						tableHTML +="</tr></thead>";
-
-					tableHTML += "<tbody>";
-					chantJson.chant.forEach(function(chant) 
-					{
-						tableHTML += "<tr title='"+chant.chanturl+"''>";
-					    tableHTML +="<td>" + chant.chantname + "</td>";
-						tableHTML +="<td>" + chant.chantownership + "</td>";
-						tableHTML +="</tr>";
-					});
-
-					tableHTML +="</tbody></table>";
-
-					$("#divMediaOwnership").html(tableHTML);
-
-					$("#spnPhoneMode").click(function()
-				{
-				   var strCurrently = $("#spnPhoneMode").text();
-				   if (strCurrently	 == "To Phone")
-				   {
-				      my_jPlayer.jPlayer("volume",0.1);
-					  $("#divTime").css({"border-color": "#FF0000", 
-										 "border-width":"1px", 
-										 "border-style":"solid"});
-					  $("#spnPhoneMode").text("To Audio");
-				   }
-				   else if (strCurrently == "To Audio")
-				   {
-				      my_jPlayer.jPlayer("volume",0.7);
-					  $("#divTime").css({"border-color": "#FF0000", 
-										 "border-width":"0px", 
-										 "border-style":"none"});					  
-					  $("#spnPhoneMode").text("To Phone");
-				   }
-				});
-				
-				$("#spnMute").click(function ()
-				{
-				   var strCurrently = $("#spnMute").text();
-				   if (strCurrently	 == "Mute")
-				      {
-						  my_jPlayer.jPlayer("mute");
-						  $("#spnMute").text("Unmute");					  
-					  }
-				   else if (strCurrently == "Unmute")		 
-				   {
-						  my_jPlayer.jPlayer("unmute");
-						  $("#spnMute").text("Mute");					  				   
-				   }
-				});
-					
-				$(function (){
-					let table = new DataTable('#tblMediaOwnership',{
-						select: {
-								style: 'multi'
-							}
-					});
-			});
-			   
-String.prototype.repeat= function(n){
-    n= n || 1;
-    return Array(n+1).join(this);
-}
-</script>
-
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-35207111-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
-</body>
+          // Initialize DataTable
+          const table = $('#myTable').DataTable({
+            responsive: true,
+            order: [[1, 'asc'], [0, 'asc']],
+            columnDefs: [
+              {
+                targets: [1], // Hide category column
+                visible: false,
+                searchable: true
+              },
+              {
+                targets: [2], // Action column
+                orderable: false,
+                responsivePriority: 2
+              }
+            ],
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            pageLength: 25,
+            language: {
+              search: "🔍 Search chants:",
+              lengthMenu: "Show _MENU_ chants",
+              info: "Showing _START_ to _END_ of _TOTAL_ chants",
+              paginate: {
+                first: "⏮️",
+                last: "⏭️",
+                next: "▶️",
+                previous: "◀️"
+              }
+            },
+            rowGroup: {
+              dataSrc: 1,
+              startRender: function(rows, group) {
+                const count = rows.count();
+                return $('<tr/>')
+                  .addClass('group')
+                  .attr('data-group', group)
+                  .css({
+                    'background': 'linear-gradient(to right, #4a6fa5, #5a7ab5)',
+                    'color': 'white'
+                  })
+                  .append(
+                    $('<td/>')
+                      .attr('colspan', 3)
+                      .css({
+                        'color': 'white',
+                        'font-weight': '600',
+                        'padding': '16px 12px',
+                        'font-size': '1.1rem'
+                      })
+                      .html(
+                        `<span class="toggle-icon">▼</span>
+                         <strong>${group}</strong> 
+                         <span style="float:right; opacity:0.9; font-weight:normal">${count} chants</span>`
+                      )
+                  );
+              }
+            },
+            drawCallback: function(settings) {
+              // Initially collapse all groups
+              $('tr.group').each(function() {
+                collapseGroup($(this));
+              });
+            }
+          });
+          
+          // Function to expand a group
+          function expandGroup($groupRow) {
+            const groupName = $groupRow.data('group');
+            $groupRow.removeClass('collapsed');
+            $groupRow.find('.toggle-icon').css('transform', 'rotate(0deg)');
+            
+            let $next = $groupRow.next();
+            while ($next.length && !$next.hasClass('group')) {
+              if ($next.data('category') === groupName) {
+                $next.show();
+              }
+              $next = $next.next();
+            }
+          }
+          
+          // Function to collapse a group
+          function collapseGroup($groupRow) {
+            const groupName = $groupRow.data('group');
+            $groupRow.addClass('collapsed');
+            $groupRow.find('.toggle-icon').css('transform', 'rotate(-90deg)');
+            
+            let $next = $groupRow.next();
+            while ($next.length && !$next.hasClass('group')) {
+              if ($next.data('category') === groupName) {
+                $next.hide();
+              }
+              $next = $next.next();
+            }
+          }
+          
+      // Play button click in table
+            $('#myTable tbody').on('click', '.row-play-btn', function(e) {
+              e.stopPropagation();
+              const index = $(this).data('index');
+              const chantData = currentChants[index];
+              playChant(chantData, index);
+            });
+          
+          // Row click (for selection)
+          $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
+            if (!$(e.target).closest('.row-play-btn').length) {
+              const index = $(this).data('index');
+              const chantData = currentChants[index];
+              if (chantData) {
+                playChant(chantData, index);
+              }
+            }
+          });
+          
+          // Group header click
+          $('#myTable').on('click', 'tr.group', function(e) {
+            e.stopPropagation();
+            const $groupRow = $(this);
+            if ($groupRow.hasClass('collapsed')) {
+              expandGroup($groupRow);
+            } else {
+              collapseGroup($groupRow);
+            }
+          });
+          
+          // Control buttons
+          $('#expandAll').on('click', function() {
+            $('tr.group').each(function() {
+              expandGroup($(this));
+            });
+          });
+          
+          $('#collapseAll').on('click', function() {
+            $('tr.group').each(function() {
+              collapseGroup($(this));
+            });
+          });
+          
+          $('#stopPlayer').on('click', stopPlayer);
+          
+          // Audio player controls
+          $('#playPauseBtn').on('click', togglePlayPause);
+          $('#prevBtn').on('click', playPreviousChant);
+          $('#nextBtn').on('click', playNextChant);
+          
+          // Progress bar click to seek
+          $('.progress-bar').on('click', function(e) {
+            if (!audioPlayer.src) return;
+            
+            const clickX = e.offsetX;
+            const width = $(this).width();
+            const percent = clickX / width;
+            audioPlayer.currentTime = percent * audioPlayer.duration;
+          });
+          
+        }).fail(function() {
+          console.error("Error loading chants.json");
+          
+          currentChants = testData;
+          
+          $('#totalCount').text(testData.length);
+          $('#groupCount').text([...new Set(testData.map(item => item.category))].length);
+          
+          const rows = testData.map((item, index) => `
+            <tr data-index="${index}" data-category="${item.category}">
+              <td>${item.chantname}</td>
+              <td style="display:none">${item.category}</td>
+              <td>
+                <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
+                  <i class="fas fa-play"></i> Play
+                </button>
+              </td>
+            </tr>
+          `).join("");
+          $("#myTable tbody").html(rows);
+          
+          // Same DataTable initialization with fallback
+          const table = $('#myTable').DataTable({
+            responsive: true,
+            order: [[1, 'asc'], [0, 'asc']],
+            columnDefs: [
+              { targets: [1], visible: false, searchable: true },
+              { targets: [2], orderable: false }
+            ],
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            pageLength: 25,
+            language: {
+              search: "🔍 Search chants:",
+              lengthMenu: "Show _MENU_ chants"
+            },
+            rowGroup: {
+              dataSrc: 1,
+              startRender: function(rows, group) {
+                const count = rows.count();
+                return $('<tr/>')
+                  .addClass('group')
+                  .attr('data-group', group)
+                  .css({
+                    'background': 'linear-gradient(to right, #4a6fa5, #5a7ab5)',
+                    'color': 'white'
+                  })
+                  .append(
+                    $('<td/>')
+                      .attr('colspan', 3)
+                      .css({
+                        'color': 'white',
+                        'font-weight': '600',
+                        'padding': '16px 12px'
+                      })
+                      .html(
+                        `<span class="toggle-icon">▼</span>
+                         <strong>${group}</strong> 
+                         <span style="float:right; opacity:0.9">${count} chants</span>`
+                      )
+                  );
+              }
+            },
+            drawCallback: function() {
+              $('tr.group').each(function() {
+                collapseGroup($(this));
+              });
+            }
+          });
+          
+          // Same event handlers for fallback
+          $('#myTable tbody').on('click', '.row-play-btn', function(e) {
+            e.stopPropagation();
+            const index = $(this).data('index');
+            const chantData = JSON.parse($(this).data('chant').replace(/&apos;/g, "'"));
+            playChant(chantData, index);
+          });
+          
+          $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
+            if (!$(e.target).closest('.row-play-btn').length) {
+              const index = $(this).data('index');
+              const chantData = currentChants[index];
+              if (chantData) {
+                playChant(chantData, index);
+              }
+            }
+          });
+          
+          $('#myTable').on('click', 'tr.group', function(e) {
+            e.stopPropagation();
+            const $groupRow = $(this);
+            if ($groupRow.hasClass('collapsed')) {
+              expandGroup($(this));
+            } else {
+              collapseGroup($(this));
+            }
+          });
+          
+          $('#expandAll').on('click', function() {
+            $('tr.group').each(function() {
+              expandGroup($(this));
+            });
+          });
+          
+          $('#collapseAll').on('click', function() {
+            $('tr.group').each(function() {
+              collapseGroup($(this));
+            });
+          });
+          
+          $('#stopPlayer').on('click', stopPlayer);
+          $('#playPauseBtn').on('click', togglePlayPause);
+          $('#prevBtn').on('click', playPreviousChant);
+          $('#nextBtn').on('click', playNextChant);
+          
+          $('.progress-bar').on('click', function(e) {
+            if (!audioPlayer.src) return;
+            
+            const clickX = e.offsetX;
+            const width = $(this).width();
+            const percent = clickX / width;
+            audioPlayer.currentTime = percent * audioPlayer.duration;
+          });
+        });
+        
+        // Define global functions for fallback
+        function expandGroup($groupRow) {
+          const groupName = $groupRow.data('group');
+          $groupRow.removeClass('collapsed');
+          $groupRow.find('.toggle-icon').css('transform', 'rotate(0deg)');
+          
+          let $next = $groupRow.next();
+          while ($next.length && !$next.hasClass('group')) {
+            if ($next.data('category') === groupName) {
+              $next.show();
+            }
+            $next = $next.next();
+          }
+        }
+        
+        function collapseGroup($groupRow) {
+          const groupName = $groupRow.data('group');
+          $groupRow.addClass('collapsed');
+          $groupRow.find('.toggle-icon').css('transform', 'rotate(-90deg)');
+          
+          let $next = $groupRow.next();
+          while ($next.length && !$next.hasClass('group')) {
+            if ($next.data('category') === groupName) {
+              $next.hide();
+            }
+            $next = $next.next();
+          }
+        }
+      });
+    </script>
+  </body>
 </html>
