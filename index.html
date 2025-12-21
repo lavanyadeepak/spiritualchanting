@@ -373,6 +373,42 @@
           font-size: 13px;
         }
       }
+
+     .stop-player-btn.active {
+        background: #dc3545 !important; /* Red when active */
+      }
+
+    .stop-player-btn:not(.active) {
+      background: #28a745; /* Green */
+    }
+
+      #repeatBtn {
+        position: relative;
+      }
+
+      #repeatBtn.repeat-all #repeatIcon {
+        color: #ffd166;
+      }
+
+      #repeatBtn.repeat-one #repeatIcon {
+        color: #ffd166;
+      }
+
+      #repeatBtn.repeat-one::after {
+        content: "1";
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+        background: #4a6fa5;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -394,6 +430,11 @@
           <button class="player-btn" id="nextBtn" title="Next">
             <i class="fas fa-step-forward"></i>
           </button>
+
+            <!-- New Repeat Button -->
+            <button class="player-btn" id="repeatBtn" title="Repeat Mode">
+              <i class="fas fa-redo" id="repeatIcon"></i>
+            </button>
         </div>
         
         <div class="progress-container">
@@ -426,7 +467,7 @@
         <button id="collapseAll" class="btn btn-secondary">
           <i class="fas fa-compress"></i> Collapse All
         </button>
-        <button id="stopPlayer" class="btn" style="background:#dc3545;color:white;">
+        <button id="stopPlayer" class="btn stop-player-btn" style="background:#6c757d;color:white;">
           <i class="fas fa-stop"></i> Stop Player
         </button>
       </div>
@@ -449,6 +490,24 @@
         <div style="margin-top: 8px; font-size: 0.85rem; color: #4a6fa5;">
           <i class="fas fa-info-circle"></i> Click any chant to play | Click group headers to expand/collapse
         </div>
+
+        <div style="margin-top: 12px; padding: 12px; background: #f0f4f8; border-radius: 8px; font-size: 0.85rem;">
+            <strong>Chanting Utility</strong> — A personal devotional project by 
+            <a href="https://lavanyadeepak.github.io/" target="_blank" style="color: #4a6fa5; text-decoration: underline;">
+              Lavanya Deepak
+            </a>
+            <br><br>
+            All chants included here are believed to be in the <strong>public domain</strong> or sourced from freely available devotional recordings. 
+            This app is offered purely as a non-commercial community service to promote meditation, spirituality, and world peace. 
+            No copyright infringement is intended. If any content is found to be improperly used, please 
+            <a href="https://github.com/lavanyadeepak/lavanyadeepak.github.io/issues" target="_blank" style="color: #4a6fa5;">
+              contact the maintainer
+            </a> for immediate removal.
+          </div>
+          
+          <div style="margin-top: 12px; color: #777; font-size: 0.8rem;">
+            © 2025 Lavanya Deepak • Made with devotion 🙏
+          </div>
       </div>
     </div>
 
@@ -463,7 +522,8 @@
         let currentChantIndex = -1;
         let currentChants = [];
         let isPlaying = false;
-        
+        let repeatMode = 'none'; // 'none', 'all', 'one'
+
         // Initialize audio player
         function initAudioPlayer() {
           audioPlayer = new Audio();
@@ -480,16 +540,49 @@
               $('#duration').text(formatTime(audioPlayer.duration));
             }
           });
+
+          // Repeat button toggle
+          $('#repeatBtn').on('click', function() {
+            if (repeatMode === 'none') {
+              repeatMode = 'all';
+              $('#repeatBtn').removeClass('repeat-none repeat-one').addClass('repeat-all');
+            } else if (repeatMode === 'all') {
+              repeatMode = 'one';
+              $('#repeatBtn').removeClass('repeat-none repeat-all').addClass('repeat-one');
+            } else {
+              repeatMode = 'none';
+              $('#repeatBtn').removeClass('repeat-all repeat-one').addClass('repeat-none');
+            }
+            
+            // Update icon color
+            if (repeatMode === 'none') {
+              $('#repeatIcon').css('color', '');
+            } else {
+              $('#repeatIcon').css('color', '#ffd166');
+            }
+          });
           
           // Handle audio end
-          audioPlayer.addEventListener('ended', function() {
-            isPlaying = false;
-            $('#playIcon').removeClass('fa-pause').addClass('fa-play');
-            $('.row-play-btn.playing').removeClass('playing');
-            
-            // Auto-play next chant if available
-            setTimeout(playNextChant, 1000);
-          });
+            audioPlayer.addEventListener('ended', function() {
+              isPlaying = false;
+              $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+              $('.row-play-btn.playing').removeClass('playing');
+              
+              if (repeatMode === 'one') {
+                // Repeat current chant
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+                isPlaying = true;
+                $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+                $(`.row-play-btn[data-index="${currentChantIndex}"]`).addClass('playing');
+              } else if (repeatMode === 'all') {
+                // Continue to next (loop if at end)
+                playNextChant();
+              } else {
+                // Default: play next once, then stop at end
+                setTimeout(playNextChant, 1000);
+              }
+            });
           
           // Handle volume change
           $('#volumeSlider').on('input', function() {
@@ -512,7 +605,8 @@
           $('#nowPlayingTitle').text(chantData.chantname);
           $('#nowPlayingCategory').text(chantData.category);
           $('#audioPlayer').addClass('active');
-          
+          $('#stopPlayer').addClass('active');
+
           // Update selected row
           $('tr.selected').removeClass('selected');
           $('tr').eq(rowIndex).addClass('selected');
@@ -529,30 +623,70 @@
           currentChantIndex = rowIndex;
         }
         
-        // Play next chant
+          // Play next visible chant (respects search/filter)
         function playNextChant() {
           if (currentChants.length === 0) return;
-          
-          let nextIndex = currentChantIndex + 1;
-          if (nextIndex >= currentChants.length) {
-            nextIndex = 0; // Loop back to start
+
+          const table = $('#myTable').DataTable();
+          const visibleRows = table.rows({ search: 'applied' }).nodes(); // Only visible after search
+          const visibleIndices = [];
+
+          visibleRows.each(function() {
+            const index = parseInt($(this).data('index'));
+            if (!isNaN(index)) visibleIndices.push(index);
+          });
+
+          if (visibleIndices.length === 0) return;
+
+          let currentPos = visibleIndices.indexOf(currentChantIndex);
+          let nextPos;
+
+          if (repeatMode === 'one') {
+            // Stay on current
+            nextPos = currentPos;
+          } else if (repeatMode === 'all') {
+            nextPos = (currentPos + 1) % visibleIndices.length;
+          } else {
+            nextPos = currentPos + 1;
+            if (nextPos >= visibleIndices.length) {
+              stopPlayer();
+              return;
+            }
           }
-          
+
+          const nextIndex = visibleIndices[nextPos];
           const nextChant = currentChants[nextIndex];
           if (nextChant) {
             playChant(nextChant, nextIndex);
           }
         }
-        
-        // Play previous chant
+
+        // Play previous visible chant
         function playPreviousChant() {
           if (currentChants.length === 0) return;
-          
-          let prevIndex = currentChantIndex - 1;
-          if (prevIndex < 0) {
-            prevIndex = currentChants.length - 1; // Loop to end
+
+          const table = $('#myTable').DataTable();
+          const visibleRows = table.rows({ search: 'applied' }).nodes();
+          const visibleIndices = [];
+
+          visibleRows.each(function() {
+            const index = parseInt($(this).data('index'));
+            if (!isNaN(index)) visibleIndices.push(index);
+          });
+
+          if (visibleIndices.length === 0) return;
+
+          let currentPos = visibleIndices.indexOf(currentChantIndex);
+          let prevPos;
+
+          if (repeatMode === 'all' || repeatMode === 'one') {
+            prevPos = (currentPos - 1 + visibleIndices.length) % visibleIndices.length;
+          } else {
+            prevPos = currentPos - 1;
+            if (prevPos < 0) return; // Don't go before first unless looping
           }
-          
+
+          const prevIndex = visibleIndices[prevPos];
           const prevChant = currentChants[prevIndex];
           if (prevChant) {
             playChant(prevChant, prevIndex);
@@ -578,12 +712,16 @@
           if (audioPlayer) {
             audioPlayer.pause();
             audioPlayer.currentTime = 0;
+            audioPlayer.src = ''; // Optional: fully reset source
           }
           isPlaying = false;
           $('#playIcon').removeClass('fa-pause').addClass('fa-play');
           $('#audioPlayer').removeClass('active');
           $('.row-play-btn.playing').removeClass('playing');
           $('tr.selected').removeClass('selected');
+          
+          // Add this line:
+          $('#stopPlayer').removeClass('active');
         }
         
         // Initialize audio player
