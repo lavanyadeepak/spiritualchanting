@@ -409,9 +409,127 @@
         line-height: 14px;
         text-align: center;
       }
+
+            /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 16px;
+        max-width: 90%;
+        width: 500px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        overflow: hidden;
+        animation: slideUp 0.4s ease;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #4a6fa5 0%, #3a5a8a 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .modal-header i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+
+      .modal-body {
+        padding: 20px;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      .modal-body strong {
+        color: #4a6fa5;
+      }
+
+      .modal-footer {
+        padding: 15px 20px;
+        text-align: right;
+        background: #f8f9fa;
+        border-top: 1px solid #eee;
+      }
+
+      .modal-btn {
+        padding: 10px 24px;
+        background: #4a6fa5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .modal-btn:hover {
+        background: #3a5a8a;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @media (max-width: 480px) {
+        .modal-content {
+          margin: 20px;
+          width: calc(100% - 40px);
+        }
+      }
     </style>
   </head>
   <body>
+
+    <!-- Copyright/Modal Dialog -->
+    <div class="modal" id="copyrightModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h2>Chant Audio Not Available</h2>
+        </div>
+        <div class="modal-body">
+          <p>Some chant audio files are not included in this public version due to <strong>copyright restrictions</strong> and are not freely available in the public domain.</p>
+          <p>To experience the full chant:</p>
+          <ul style="padding-left: 20px; margin: 10px 0;">
+            <li>Obtain the original audio files legally (e.g., from official sources or your personal collection).</li>
+            <li>Place them in a local folder and update the <code>chants.json</code> file with correct local paths.</li>
+            <li>Or host them yourself and update the URLs accordingly.</li>
+          </ul>
+          <p>For guidance on required files, naming conventions, or local hosting instructions, please contact the maintainer.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn" id="closeModal">OK</button>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
       <!-- Audio Player -->
       <div class="audio-player" id="audioPlayer">
@@ -524,6 +642,9 @@
         let isPlaying = false;
         let repeatMode = 'none'; // 'none', 'all', 'one'
 
+        // Track which chants have already shown the error (avoid spam)
+        const shownErrorFor = new Set();
+
         // Initialize audio player
         function initAudioPlayer() {
           audioPlayer = new Audio();
@@ -597,31 +718,70 @@
           return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
         
-        // Play a specific chant
+      
+        // Updated playChant function with error handling
         function playChant(chantData, rowIndex) {
           if (!chantData || !chantData.chanturl) return;
-          
-          // Update UI
+
+          // Update UI immediately
           $('#nowPlayingTitle').text(chantData.chantname);
           $('#nowPlayingCategory').text(chantData.category);
           $('#audioPlayer').addClass('active');
           $('#stopPlayer').addClass('active');
 
-          // Update selected row
           $('tr.selected').removeClass('selected');
-          $('tr').eq(rowIndex).addClass('selected');
+          $('tr').eq(rowIndex + 1).addClass('selected'); // +1 because header
           $('.row-play-btn.playing').removeClass('playing');
           $(`.row-play-btn[data-index="${rowIndex}"]`).addClass('playing');
-          
-          // Set and play audio
+
+          // Set source
           audioPlayer.src = chantData.chanturl;
-          audioPlayer.play();
-          isPlaying = true;
+
+          // Clear any previous error handlers to avoid duplicates
+          audioPlayer.onerror = null;
+
+          // Handle load error
+          audioPlayer.onerror = () => {
+            // Only show modal once per chant
+            if (!shownErrorFor.has(chantData.chantname)) {
+              shownErrorFor.add(chantData.chantname);
+              $('#copyrightModal').addClass('active');
+            }
+
+            // Fallback UI: show paused state
+            isPlaying = false;
+            $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+            $('.row-play-btn.playing').removeClass('playing');
+          };
+
+          // Attempt to play
+          const playPromise = audioPlayer.play();
+
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              // Autoplay blocked or other play error
+              console.warn("Play interrupted:", error);
+              $('#playIcon').removeClass('fa-pause').addClass('fa-play');
+              isPlaying = false;
+            });
+          }
+
           $('#playIcon').removeClass('fa-play').addClass('fa-pause');
-          
-          // Update current index
+          isPlaying = true;
           currentChantIndex = rowIndex;
         }
+
+        // Close modal
+        $('#closeModal').on('click', function() {
+          $('#copyrightModal').removeClass('active');
+        });
+
+        // Close modal when clicking outside
+        $('#copyrightModal').on('click', function(e) {
+          if (e.target === this) {
+            $(this).removeClass('active');
+          }
+        });
         
           // Play next visible chant (respects search/filter)
         function playNextChant() {
