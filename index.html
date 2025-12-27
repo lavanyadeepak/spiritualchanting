@@ -409,6 +409,54 @@
         line-height: 14px;
         text-align: center;
       }
+      
+      #repeatBtn.repeat-n::after {
+        content: "N";
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        font-size: 10px;
+        font-weight: bold;
+        color: white;
+        background: #4a6fa5;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        text-align: center;
+      }
+
+      .repeat-n-container {
+        display: none; /* Initially hidden */
+        align-items: center;
+        gap: 8px;
+        color: white;
+      }
+
+      #repeatCountInput {
+        width: 50px;
+        padding: 5px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.5);
+        text-align: center;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        font-weight: bold;
+        -moz-appearance: textfield; /* Firefox */
+      }
+
+      .stop-on-completion-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: white;
+        font-size: 0.9rem;
+        margin-left: 10px;
+      }
+
+      #stopOnCompletionCb {
+        vertical-align: middle;
+      }
 
             /* Modal Styles */
       .modal {
@@ -553,6 +601,14 @@
             <button class="player-btn" id="repeatBtn" title="Repeat Mode">
               <i class="fas fa-redo" id="repeatIcon"></i>
             </button>
+            <div class="repeat-n-container">
+              <input type="number" id="repeatCountInput" value="3" min="1" max="108">
+              <span style="font-size: 0.9rem;">times</span>
+            </div>
+            <div class="stop-on-completion-container">
+              <input type="checkbox" id="stopOnCompletionCb" checked>
+              <label for="stopOnCompletionCb" style="cursor: pointer;">Stop on Completion</label>
+            </div>
         </div>
         
         <div class="progress-container">
@@ -640,7 +696,9 @@
         let currentChantIndex = -1;
         let currentChants = [];
         let isPlaying = false;
-        let repeatMode = 'none'; // 'none', 'all', 'one'
+        let repeatMode = 'none'; // 'none', 'all', 'one', 'n-times'
+        let repeatN = 3; // Default N for repeat N times
+        let currentRepeatCount = 0;
 
         // Track which chants have already shown the error (avoid spam)
         const shownErrorFor = new Set();
@@ -666,13 +724,20 @@
           $('#repeatBtn').on('click', function() {
             if (repeatMode === 'none') {
               repeatMode = 'all';
-              $('#repeatBtn').removeClass('repeat-none repeat-one').addClass('repeat-all');
+              $(this).removeClass('repeat-none repeat-one repeat-n').addClass('repeat-all');
+              $('.repeat-n-container').hide();
             } else if (repeatMode === 'all') {
               repeatMode = 'one';
-              $('#repeatBtn').removeClass('repeat-none repeat-all').addClass('repeat-one');
+              $(this).removeClass('repeat-none repeat-all repeat-n').addClass('repeat-one');
+              $('.repeat-n-container').hide();
+            } else if (repeatMode === 'one') {
+              repeatMode = 'n-times';
+              $(this).removeClass('repeat-none repeat-all repeat-one').addClass('repeat-n');
+              $('.repeat-n-container').css('display', 'flex');
             } else {
               repeatMode = 'none';
-              $('#repeatBtn').removeClass('repeat-all repeat-one').addClass('repeat-none');
+              $(this).removeClass('repeat-all repeat-one repeat-n').addClass('repeat-none');
+              $('.repeat-n-container').hide();
             }
             
             // Update icon color
@@ -696,12 +761,23 @@
                 isPlaying = true;
                 $('#playIcon').removeClass('fa-play').addClass('fa-pause');
                 $(`.row-play-btn[data-index="${currentChantIndex}"]`).addClass('playing');
+              } else if (repeatMode === 'n-times' && currentRepeatCount < (repeatN - 1)) {
+                currentRepeatCount++;
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+                isPlaying = true;
+                $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+                $(`.row-play-btn[data-index="${currentChantIndex}"]`).addClass('playing');
               } else if (repeatMode === 'all') {
                 // Continue to next (loop if at end)
                 playNextChant();
               } else {
                 // Default: play next once, then stop at end
-                setTimeout(playNextChant, 1000);
+                currentRepeatCount = 0; // Reset for next time'
+                if (!$('#stopOnCompletionCb').is(':checked')) {
+                    // if not checked, continue to next
+                    setTimeout(playNextChant, 1000);
+                }
               }
             });
           
@@ -722,6 +798,12 @@
         // Updated playChant function with error handling
         function playChant(chantData, rowIndex) {
           if (!chantData || !chantData.chanturl) return;
+
+          // Reset repeat counter for the new chant
+          currentRepeatCount = 0;
+          if (repeatMode === 'n-times') {
+            repeatN = parseInt($('#repeatCountInput').val(), 10) || 3;
+          }
 
           // Update UI immediately
           $('#nowPlayingTitle').text(chantData.chantname);
@@ -801,7 +883,7 @@
           let currentPos = visibleIndices.indexOf(currentChantIndex);
           let nextPos;
 
-          if (repeatMode === 'one') {
+          if (repeatMode === 'one' || (repeatMode === 'n-times' && currentRepeatCount > 0)) {
             // Stay on current
             nextPos = currentPos;
           } else if (repeatMode === 'all') {
@@ -888,7 +970,7 @@
         initAudioPlayer();
         
         // Load chants data
-        $.getJSON("chants.json", function(data) {
+        $.getJSON("https://raw.githubusercontent.com/lavanyadeepak/lavanyadeepak.github.io/refs/heads/master/chants.prod.json", function(data) {
           currentChants = data;
           
           // Update counters
