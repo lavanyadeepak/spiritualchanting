@@ -551,6 +551,65 @@
           width: calc(100% - 40px);
         }
       }
+
+      /* Playlist Styles */
+      .playlist-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        background: #f9f9f9;
+        margin-bottom: 5px;
+        border-radius: 6px;
+        transition: background 0.2s;
+      }
+      .playlist-item.active {
+        background: #e8f4ff;
+        border-left: 4px solid #4a6fa5;
+      }
+      .playlist-controls {
+        display: flex;
+        gap: 5px;
+      }
+      .playlist-btn-small {
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        background: white;
+        color: #333;
+      }
+      .playlist-btn-small:hover {
+        background: #eee;
+      }
+      .playlist-btn-small.remove {
+        color: #dc3545;
+        border-color: #dc3545;
+      }
+      .playlist-btn-small.remove:hover {
+        background: #dc3545;
+        color: white;
+      }
+      .row-add-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #6c757d;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: all 0.2s;
+      }
+      .row-add-btn:hover {
+        background: #5a6268;
+        transform: scale(1.1);
+      }
     </style>
   </head>
   <body>
@@ -574,6 +633,34 @@
         </div>
         <div class="modal-footer">
           <button class="modal-btn" id="closeModal">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playlist Modal -->
+    <div class="modal" id="playlistModal">
+      <div class="modal-content" style="width: 600px;">
+        <div class="modal-header">
+          <i class="fas fa-list-ol"></i>
+          <h2>My Playlist</h2>
+        </div>
+        <div class="modal-body">
+          <div id="playlistEmptyMsg" style="text-align:center; color:#777; padding:20px;">
+            Playlist is empty. <br>Click the <i class="fas fa-plus-circle"></i> button next to chants to add them.
+          </div>
+          <ul id="playlistItems" style="list-style:none; padding:0; max-height: 400px; overflow-y:auto;"></ul>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; gap:5px;">
+            <button id="downloadPlaylistBtn" class="modal-btn" style="background:#17a2b8; font-size:0.9rem;" title="Save to File"><i class="fas fa-download"></i> Save</button>
+            <button id="loadPlaylistBtn" class="modal-btn" style="background:#17a2b8; font-size:0.9rem;" title="Load from File"><i class="fas fa-upload"></i> Load</button>
+            <input type="file" id="playlistFileInput" accept=".json" style="display:none">
+          </div>
+          <div style="display:flex; gap:5px;">
+            <button id="clearPlaylistBtn" class="modal-btn" style="background:#dc3545; font-size:0.9rem;">Clear</button>
+            <button id="startPlaylistBtn" class="modal-btn" style="background:#28a745; font-size:0.9rem;"><i class="fas fa-play"></i> Play Queue</button>
+            <button class="modal-btn" id="closePlaylistModal" style="background:#6c757d; font-size:0.9rem;">Close</button>
+          </div>
         </div>
       </div>
     </div>
@@ -644,6 +731,9 @@
         <button id="stopPlayer" class="btn stop-player-btn" style="background:#6c757d;color:white;">
           <i class="fas fa-stop"></i> Stop Player
         </button>
+        <button id="openPlaylistBtn" class="btn btn-secondary">
+          <i class="fas fa-list"></i> Playlist <span id="playlistBadge" style="background:white; color:#333; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:5px; display:none">0</span>
+        </button>
       </div>
       
       <!-- DataTable -->
@@ -699,6 +789,10 @@
         let repeatMode = 'none'; // 'none', 'all', 'one', 'n-times'
         let repeatN = 3; // Default N for repeat N times
         let currentRepeatCount = 0;
+        
+        let playlist = [];
+        let isPlaylistMode = false;
+        let currentPlaylistIndex = -1;
 
         // Track which chants have already shown the error (avoid spam)
         const shownErrorFor = new Set();
@@ -770,11 +864,11 @@
                 $(`.row-play-btn[data-index="${currentChantIndex}"]`).addClass('playing');
               } else if (repeatMode === 'all') {
                 // Continue to next (loop if at end)
-                playNextChant();
+                playNextChant(true); // true = allow loop
               } else {
                 // Default: play next once, then stop at end
                 currentRepeatCount = 0; // Reset for next time'
-                if (!$('#stopOnCompletionCb').is(':checked')) {
+                if (isPlaylistMode || !$('#stopOnCompletionCb').is(':checked')) {
                     // if not checked, continue to next
                     setTimeout(playNextChant, 1000);
                 }
@@ -796,7 +890,7 @@
         
       
         // Updated playChant function with error handling
-        function playChant(chantData, rowIndex) {
+        function playChant(chantData, rowIndex, fromPlaylist = false) {
           if (!chantData || !chantData.chanturl) return;
 
           // Reset repeat counter for the new chant
@@ -811,9 +905,15 @@
           $('#audioPlayer').addClass('active');
           $('#stopPlayer').addClass('active');
 
+          // Update Table UI
           $('tr.selected').removeClass('selected');
-          $('tr').eq(rowIndex + 1).addClass('selected'); // +1 because header
           $('.row-play-btn.playing').removeClass('playing');
+          
+          // If we have a valid row index, highlight it
+          if (rowIndex >= 0) {
+            $('tr').eq(rowIndex + 1).addClass('selected'); // +1 because header
+          }
+          
           $(`.row-play-btn[data-index="${rowIndex}"]`).addClass('playing');
 
           // Set source
@@ -851,6 +951,10 @@
           $('#playIcon').removeClass('fa-play').addClass('fa-pause');
           isPlaying = true;
           currentChantIndex = rowIndex;
+          
+          if (!fromPlaylist) {
+            isPlaylistMode = false;
+          }
         }
 
         // Close modal
@@ -865,8 +969,23 @@
           }
         });
         
-          // Play next visible chant (respects search/filter)
-        function playNextChant() {
+        // Play next visible chant (respects search/filter)
+        function playNextChant(loop = false) {
+          // Playlist Mode Logic
+          if (isPlaylistMode && playlist.length > 0) {
+            let nextIndex = currentPlaylistIndex + 1;
+            if (nextIndex >= playlist.length) {
+              if (loop) nextIndex = 0;
+              else {
+                stopPlayer();
+                return;
+              }
+            }
+            playPlaylistTrack(nextIndex);
+            return;
+          }
+
+          // Standard Table Logic
           if (currentChants.length === 0) return;
 
           const table = $('#myTable').DataTable();
@@ -887,7 +1006,7 @@
             // Stay on current
             nextPos = currentPos;
           } else if (repeatMode === 'all') {
-            nextPos = (currentPos + 1) % visibleIndices.length;
+            nextPos = (currentPos + 1) % visibleIndices.length; // Loop
           } else {
             nextPos = currentPos + 1;
             if (nextPos >= visibleIndices.length) {
@@ -905,6 +1024,15 @@
 
         // Play previous visible chant
         function playPreviousChant() {
+          // Playlist Mode Logic
+          if (isPlaylistMode && playlist.length > 0) {
+            let prevIndex = currentPlaylistIndex - 1;
+            if (prevIndex < 0) prevIndex = playlist.length - 1; // Loop back to end
+            playPlaylistTrack(prevIndex);
+            return;
+          }
+
+          // Standard Table Logic
           if (currentChants.length === 0) return;
 
           const table = $('#myTable').DataTable();
@@ -965,6 +1093,132 @@
           // Add this line:
           $('#stopPlayer').removeClass('active');
         }
+
+        // --- Playlist Functions ---
+
+        function addToPlaylist(chantData) {
+          playlist.push(chantData);
+          updatePlaylistBadge();
+          // Optional: Visual feedback
+          const btn = $(`button.row-add-btn[data-chant*="${chantData.chantname}"]`); // Simple selector attempt
+          // Since selector might be complex with JSON, just rely on badge update or toast
+        }
+
+        function updatePlaylistBadge() {
+          const count = playlist.length;
+          if (count > 0) {
+            $('#playlistBadge').text(count).show();
+          } else {
+            $('#playlistBadge').hide();
+          }
+        }
+
+        function renderPlaylist() {
+          const $list = $('#playlistItems');
+          $list.empty();
+
+          if (playlist.length === 0) {
+            $('#playlistEmptyMsg').show();
+            return;
+          }
+          $('#playlistEmptyMsg').hide();
+
+          playlist.forEach((item, index) => {
+            const isActive = isPlaylistMode && index === currentPlaylistIndex;
+            const li = `
+              <li class="playlist-item ${isActive ? 'active' : ''}">
+                <div style="flex:1; margin-right:10px;">
+                  <strong>${index + 1}. ${item.chantname}</strong><br>
+                  <small>${item.category}</small>
+                </div>
+                <div class="playlist-controls">
+                  <button class="playlist-btn-small" onclick="movePlaylistItem(${index}, -1)" title="Move Up"><i class="fas fa-arrow-up"></i></button>
+                  <button class="playlist-btn-small" onclick="movePlaylistItem(${index}, 1)" title="Move Down"><i class="fas fa-arrow-down"></i></button>
+                  <button class="playlist-btn-small remove" onclick="removePlaylistItem(${index})" title="Remove"><i class="fas fa-trash"></i></button>
+                  <button class="playlist-btn-small" onclick="playPlaylistTrack(${index})" title="Play"><i class="fas fa-play"></i></button>
+                </div>
+              </li>
+            `;
+            $list.append(li);
+          });
+        }
+
+        // Expose functions to global scope for onclick handlers in HTML string
+        window.movePlaylistItem = function(index, direction) {
+          if (direction === -1 && index > 0) {
+            [playlist[index], playlist[index - 1]] = [playlist[index - 1], playlist[index]];
+            if (currentPlaylistIndex === index) currentPlaylistIndex--;
+            else if (currentPlaylistIndex === index - 1) currentPlaylistIndex++;
+          } else if (direction === 1 && index < playlist.length - 1) {
+            [playlist[index], playlist[index + 1]] = [playlist[index + 1], playlist[index]];
+            if (currentPlaylistIndex === index) currentPlaylistIndex++;
+            else if (currentPlaylistIndex === index + 1) currentPlaylistIndex--;
+          }
+          renderPlaylist();
+        };
+
+        window.removePlaylistItem = function(index) {
+          playlist.splice(index, 1);
+          if (index < currentPlaylistIndex) currentPlaylistIndex--;
+          else if (index === currentPlaylistIndex) {
+            // If removing currently playing, maybe stop or play next?
+            // For now, just keep playing but index shifts. 
+            // If we want to stop: stopPlayer();
+          }
+          updatePlaylistBadge();
+          renderPlaylist();
+        };
+
+        window.playPlaylistTrack = function(index) {
+          if (index < 0 || index >= playlist.length) return;
+          
+          const item = playlist[index];
+          isPlaylistMode = true;
+          currentPlaylistIndex = index;
+          
+          // Try to find index in main table for highlighting (optional)
+          let tableIndex = -1;
+          // Simple search by name and category
+          for(let i=0; i<currentChants.length; i++) {
+            if(currentChants[i].chantname === item.chantname && currentChants[i].category === item.category) {
+              tableIndex = i;
+              break;
+            }
+          }
+
+          playChant(item, tableIndex, true);
+          renderPlaylist(); // Update active class
+        };
+
+        // Playlist Modal Events
+        $('#openPlaylistBtn').on('click', function() {
+          renderPlaylist();
+          $('#playlistModal').addClass('active');
+        });
+
+        $('#closePlaylistModal').on('click', function() {
+          $('#playlistModal').removeClass('active');
+        });
+
+        $('#clearPlaylistBtn').on('click', function() {
+          if(confirm('Clear entire playlist?')) {
+            playlist = [];
+            currentPlaylistIndex = -1;
+            updatePlaylistBadge();
+            renderPlaylist();
+            if(isPlaylistMode) stopPlayer();
+          }
+        });
+
+        $('#startPlaylistBtn').on('click', function() {
+          if (playlist.length > 0) {
+            playPlaylistTrack(0);
+            $('#playlistModal').removeClass('active');
+          } else {
+            alert("Playlist is empty!");
+          }
+        }
+      );
         
         // Initialize audio player
         initAudioPlayer();
@@ -986,6 +1240,9 @@
               <td>
                 <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
                   <i class="fas fa-play"></i> Play
+                </button>
+                <button class="row-add-btn" data-index="${index}" title="Add to Playlist">
+                  <i class="fas fa-plus"></i>
                 </button>
               </td>
             </tr>
@@ -1094,6 +1351,14 @@
               const chantData = currentChants[index];
               playChant(chantData, index);
             });
+
+            // Add to Playlist button click
+            $('#myTable tbody').on('click', '.row-add-btn', function(e) {
+              e.stopPropagation();
+              const index = $(this).data('index');
+              const chantData = currentChants[index];
+              addToPlaylist(chantData);
+            });
           
           // Row click (for selection)
           $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
@@ -1146,6 +1411,52 @@
             const percent = clickX / width;
             audioPlayer.currentTime = percent * audioPlayer.duration;
           });
+
+          // Download Playlist
+          $('#downloadPlaylistBtn').on('click', function() {
+            if (playlist.length === 0) {
+              alert("Playlist is empty");
+              return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlist));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "my_chant_playlist.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+          });
+
+          // Load Playlist Trigger
+          $('#loadPlaylistBtn').on('click', function() {
+            $('#playlistFileInput').click();
+          });
+
+          // Handle File Selection
+          $('#playlistFileInput').on('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              try {
+                const loadedPlaylist = JSON.parse(e.target.result);
+                if (Array.isArray(loadedPlaylist)) {
+                  playlist = loadedPlaylist;
+                  updatePlaylistBadge();
+                  renderPlaylist();
+                  alert("Playlist loaded successfully!");
+                } else {
+                  alert("Invalid playlist file format.");
+                }
+              } catch (err) {
+                console.error(err);
+                alert("Error parsing playlist file.");
+              }
+            };
+            reader.readAsText(file);
+            // Reset input so same file can be selected again if needed
+            $(this).val('');
+          });
           
         }).fail(function() {
           console.error("Error loading chants.json");
@@ -1162,6 +1473,9 @@
               <td>
                 <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
                   <i class="fas fa-play"></i> Play
+                </button>
+                <button class="row-add-btn" data-index="${index}" title="Add to Playlist">
+                  <i class="fas fa-plus"></i>
                 </button>
               </td>
             </tr>
@@ -1222,6 +1536,13 @@
             const index = $(this).data('index');
             const chantData = JSON.parse($(this).data('chant').replace(/&apos;/g, "'"));
             playChant(chantData, index);
+          });
+
+          $('#myTable tbody').on('click', '.row-add-btn', function(e) {
+            e.stopPropagation();
+            const index = $(this).data('index');
+            const chantData = currentChants[index]; // Fallback uses same array structure
+            addToPlaylist(chantData);
           });
           
           $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
