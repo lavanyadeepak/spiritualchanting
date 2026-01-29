@@ -4,40 +4,8 @@
     <title>Chanting Utility</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <script>
-      // Flag to decide source
-      const useCDN = false;
-
-      // Define CSS sources
-      const cssSources = {
-        fontawesome: useCDN 
-          ? "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          : "assets/css/all.min.css",
-        datatables: useCDN 
-          ? "https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-          : "assets/css/jquery.dataTables.min.css",
-        responsive: useCDN 
-          ? "https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"
-          : "assets/css/responsive.dataTables.min.css",
-        rowgroup: useCDN 
-          ? "https://cdn.datatables.net/rowgroup/1.4.0/css/rowGroup.dataTables.min.css"
-          : "assets/css/rowGroup.dataTables.min.css"
-      };
-
-      // Function to inject CSS
-      function loadCSS(href) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = href;
-        document.head.appendChild(link);
-      }
-
-      // Load all stylesheets
-      loadCSS(cssSources.fontawesome);
-      loadCSS(cssSources.datatables);
-      loadCSS(cssSources.responsive);
-      loadCSS(cssSources.rowgroup);
-    </script>
+    <!-- Bundled CSS -->
+    <link rel="stylesheet" href="assets/css/bundle.css">
 
     <style>
       /* Mobile-first responsive design */
@@ -807,42 +775,13 @@
       </div>
     </div>
 
+    <!-- Bundled JS -->
+    <script src="assets/js/bundle.js"></script>
     <script>
-      // Define sources
-      const sources = {
-        jquery: useCDN 
-          ? "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-          : "assets/js/jquery-3.7.0.min.js",
-        datatables: useCDN 
-          ? "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"
-          : "assets/js/jquery.dataTables.min.js",
-        responsive: useCDN 
-          ? "https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"
-          : "assets/js/dataTables.responsive.min.js",
-        rowgroup: useCDN 
-          ? "https://cdn.datatables.net/rowgroup/1.4.0/js/dataTables.rowGroup.min.js"
-          : "assets/js/dataTables.rowGroup.min.js"
-      };
-
-      // Function to inject script
-      function loadScript(src,callback) {
-        const s = document.createElement("script");
-        s.src = src;
-        s.onload = callback;
-        s.async = false; // preserve order
-        document.head.appendChild(s);
-      }
-
-      // Load all scripts in order
-      loadScript(sources.jquery,function(){
-        loadScript(sources.datatables,function(){
-          pseudoStart();
-        });
+      $(document).ready(function() {
+        pseudoStart();
       });
-      loadScript(sources.responsive);
-      loadScript(sources.rowgroup);
-    </script>
-    <script>
+
       function pseudoStart(){
         // Audio player variables
         let audioPlayer = null;
