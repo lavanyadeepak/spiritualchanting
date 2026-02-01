@@ -791,6 +791,7 @@
         let repeatMode = 'none'; // 'none', 'all', 'one', 'n-times'
         let repeatN = 3; // Default N for repeat N times
         let currentRepeatCount = 0;
+        let currentTrackTargetRepeatCount = 1;
         
         let playlist = [];
         let isPlaylistMode = false;
@@ -850,6 +851,18 @@
               $('#playIcon').removeClass('fa-pause').addClass('fa-play');
               $('.row-play-btn.playing').removeClass('playing');
               
+              if (isPlaylistMode && currentTrackTargetRepeatCount > 1 && currentRepeatCount < (currentTrackTargetRepeatCount - 1)) {
+                currentRepeatCount++;
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+                isPlaying = true;
+                $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+                if (currentChantIndex >= 0) {
+                  $(`.row-play-btn[data-index="${currentChantIndex}"]`).addClass('playing');
+                }
+                return;
+              }
+
               if (repeatMode === 'one') {
                 // Repeat current chant
                 audioPlayer.currentTime = 0;
@@ -897,6 +910,13 @@
 
           // Reset repeat counter for the new chant
           currentRepeatCount = 0;
+
+          if (fromPlaylist && chantData.repeatCount) {
+            currentTrackTargetRepeatCount = chantData.repeatCount;
+          } else {
+            currentTrackTargetRepeatCount = 1;
+          }
+
           if (repeatMode === 'n-times') {
             repeatN = parseInt($('#repeatCountInput').val(), 10) || 3;
           }
@@ -1084,6 +1104,7 @@
           if (audioPlayer) {
             audioPlayer.pause();
             audioPlayer.currentTime = 0;
+            audioPlayer.onerror = null;
             audioPlayer.src = ''; // Optional: fully reset source
           }
           isPlaying = false;
@@ -1099,7 +1120,14 @@
         // --- Playlist Functions ---
 
         function addToPlaylist(chantData) {
-          playlist.push(chantData);
+          let countStr = prompt("How many times to repeat this chant?", "1");
+          if (countStr === null) return;
+          let count = parseInt(countStr, 10);
+          if (isNaN(count) || count < 1) count = 1;
+
+          let item = JSON.parse(JSON.stringify(chantData));
+          item.repeatCount = count;
+          playlist.push(item);
           updatePlaylistBadge();
           // Optional: Visual feedback
           const btn = $(`button.row-add-btn[data-chant*="${chantData.chantname}"]`); // Simple selector attempt
@@ -1127,10 +1155,12 @@
 
           playlist.forEach((item, index) => {
             const isActive = isPlaylistMode && index === currentPlaylistIndex;
+            const repeatBadge = item.repeatCount > 1 ? `<span style="background:#ffd166; color:#333; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:5px; font-weight:bold;">x${item.repeatCount}</span>` : '';
             const li = `
               <li class="playlist-item ${isActive ? 'active' : ''}">
                 <div style="flex:1; margin-right:10px;">
                   <strong>${index + 1}. ${item.chantname}</strong><br>
+                  <strong>${index + 1}. ${item.chantname}</strong>${repeatBadge}<br>
                   <small>${item.category}</small>
                 </div>
                 <div class="playlist-controls">
