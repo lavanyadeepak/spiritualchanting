@@ -1,4 +1,4 @@
-[
+var chantsData = [
   {
     "chantname": "Samayapuram",
     "chanturl": "./chants/amman/samayapuram.mp3",
@@ -914,4 +914,4 @@
     "chanturl": "./chants/thiruppavai/30.mp3",
     "category": "Andal"
   }
-]
+];

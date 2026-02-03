@@ -777,6 +777,7 @@
 
     <!-- Bundled JS -->
     <script src="assets/js/bundle.js"></script>
+    <script src="chants.data.js"></script>
     <script>
       $(document).ready(function() {
         pseudoStart();
@@ -1254,374 +1255,240 @@
         
         // Initialize audio player
         initAudioPlayer();
-        
+       
+        const data = chantsData;
+        currentChants = data;
         // Load chants data
-        $.getJSON("https://raw.githubusercontent.com/lavanyadeepak/lavanyadeepak.github.io/refs/heads/master/chants.prod.json", function(data) {
-          currentChants = data;
-          
-          // Update counters
-          $('#totalCount').text(data.length);
-          const uniqueCategories = [...new Set(data.map(item => item.category))];
-          $('#groupCount').text(uniqueCategories.length);
-          
-          // Build table rows
-          const rows = data.map((item, index) => `
-            <tr data-index="${index}" data-category="${item.category}">
-              <td>${item.chantname}</td>
-              <td style="display:none">${item.category}</td>
-              <td>
-                <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
-                  <i class="fas fa-play"></i> Play
-                </button>
-                <button class="row-add-btn" data-index="${index}" title="Add to Playlist">
-                  <i class="fas fa-plus"></i>
-                </button>
-              </td>
-            </tr>
-          `).join("");
-          $("#myTable tbody").html(rows);
+        
+        // Update counters
+        $('#totalCount').text(data.length);
+        const uniqueCategories = [...new Set(data.map(item => item.category))];
+        $('#groupCount').text(uniqueCategories.length);
+        
+        // Build table rows
+        const rows = data.map((item, index) => `
+          <tr data-index="${index}" data-category="${item.category}">
+            <td>${item.chantname}</td>
+            <td style="display:none">${item.category}</td>
+            <td>
+              <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
+                <i class="fas fa-play"></i> Play
+              </button>
+              <button class="row-add-btn" data-index="${index}" title="Add to Playlist">
+                <i class="fas fa-plus"></i>
+              </button>
+            </td>
+          </tr>
+        `).join("");
+        $("#myTable tbody").html(rows);
 
-          // Initialize DataTable
-          const table = $('#myTable').DataTable({
-            responsive: true,
-            order: [[1, 'asc'], [0, 'asc']],
-            columnDefs: [
-              {
-                targets: [1], // Hide category column
-                visible: false,
-                searchable: true
-              },
-              {
-                targets: [2], // Action column
-                orderable: false,
-                responsivePriority: 2
-              }
-            ],
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            pageLength: 25,
-            language: {
-              search: "🔍 Search chants:",
-              lengthMenu: "Show _MENU_ chants",
-              info: "Showing _START_ to _END_ of _TOTAL_ chants",
-              paginate: {
-                first: "⏮️",
-                last: "⏭️",
-                next: "▶️",
-                previous: "◀️"
-              }
+        // Initialize DataTable
+        const table = $('#myTable').DataTable({
+          responsive: true,
+          order: [[1, 'asc'], [0, 'asc']],
+          columnDefs: [
+            {
+              targets: [1], // Hide category column
+              visible: false,
+              searchable: true
             },
-            rowGroup: {
-              dataSrc: 1,
-              startRender: function(rows, group) {
-                const count = rows.count();
-                return $('<tr/>')
-                  .addClass('group')
-                  .attr('data-group', group)
-                  .css({
-                    'background': 'linear-gradient(to right, #4a6fa5, #5a7ab5)',
-                    'color': 'white'
-                  })
-                  .append(
-                    $('<td/>')
-                      .attr('colspan', 3)
-                      .css({
-                        'color': 'white',
-                        'font-weight': '600',
-                        'padding': '16px 12px',
-                        'font-size': '1.1rem'
-                      })
-                      .html(
-                        `<span class="toggle-icon">▼</span>
-                         <strong>${group}</strong> 
-                         <span style="float:right; opacity:0.9; font-weight:normal">${count} chants</span>`
-                      )
-                  );
-              }
-            },
-            drawCallback: function(settings) {
-              // Initially collapse all groups
-              $('tr.group').each(function() {
-                collapseGroup($(this));
-              });
+            {
+              targets: [2], // Action column
+              orderable: false,
+              responsivePriority: 2
             }
-          });
-          
-          // Function to expand a group
-          function expandGroup($groupRow) {
-            const groupName = $groupRow.data('group');
-            $groupRow.removeClass('collapsed');
-            $groupRow.find('.toggle-icon').css('transform', 'rotate(0deg)');
-            
-            let $next = $groupRow.next();
-            while ($next.length && !$next.hasClass('group')) {
-              if ($next.data('category') === groupName) {
-                $next.show();
-              }
-              $next = $next.next();
+          ],
+          lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+          pageLength: 25,
+          language: {
+            search: "🔍 Search chants:",
+            lengthMenu: "Show _MENU_ chants",
+            info: "Showing _START_ to _END_ of _TOTAL_ chants",
+            paginate: {
+              first: "⏮️",
+              last: "⏭️",
+              next: "▶️",
+              previous: "◀️"
             }
-          }
-          
-          // Function to collapse a group
-          function collapseGroup($groupRow) {
-            const groupName = $groupRow.data('group');
-            $groupRow.addClass('collapsed');
-            $groupRow.find('.toggle-icon').css('transform', 'rotate(-90deg)');
-            
-            let $next = $groupRow.next();
-            while ($next.length && !$next.hasClass('group')) {
-              if ($next.data('category') === groupName) {
-                $next.hide();
-              }
-              $next = $next.next();
+          },
+          rowGroup: {
+            dataSrc: 1,
+            startRender: function(rows, group) {
+              const count = rows.count();
+              return $('<tr/>')
+                .addClass('group')
+                .attr('data-group', group)
+                .css({
+                  'background': 'linear-gradient(to right, #4a6fa5, #5a7ab5)',
+                  'color': 'white'
+                })
+                .append(
+                  $('<td/>')
+                    .attr('colspan', 3)
+                    .css({
+                      'color': 'white',
+                      'font-weight': '600',
+                      'padding': '16px 12px',
+                      'font-size': '1.1rem'
+                    })
+                    .html(
+                      `<span class="toggle-icon">▼</span>
+                        <strong>${group}</strong> 
+                        <span style="float:right; opacity:0.9; font-weight:normal">${count} chants</span>`
+                    )
+                );
             }
-          }
-          
-      // Play button click in table
-            $('#myTable tbody').on('click', '.row-play-btn', function(e) {
-              e.stopPropagation();
-              const index = $(this).data('index');
-              const chantData = currentChants[index];
-              playChant(chantData, index);
-            });
-
-            // Add to Playlist button click
-            $('#myTable tbody').on('click', '.row-add-btn', function(e) {
-              e.stopPropagation();
-              const index = $(this).data('index');
-              const chantData = currentChants[index];
-              addToPlaylist(chantData);
-            });
-          
-          // Row click (for selection)
-          $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
-            if (!$(e.target).closest('.row-play-btn').length) {
-              const index = $(this).data('index');
-              const chantData = currentChants[index];
-              if (chantData) {
-                playChant(chantData, index);
-              }
-            }
-          });
-          
-          // Group header click
-          $('#myTable').on('click', 'tr.group', function(e) {
-            e.stopPropagation();
-            const $groupRow = $(this);
-            if ($groupRow.hasClass('collapsed')) {
-              expandGroup($groupRow);
-            } else {
-              collapseGroup($groupRow);
-            }
-          });
-          
-          // Control buttons
-          $('#expandAll').on('click', function() {
-            $('tr.group').each(function() {
-              expandGroup($(this));
-            });
-          });
-          
-          $('#collapseAll').on('click', function() {
+          },
+          drawCallback: function(settings) {
+            // Initially collapse all groups
             $('tr.group').each(function() {
               collapseGroup($(this));
             });
-          });
+          }
+        });
+        
+        // Function to expand a group
+        function expandGroup($groupRow) {
+          const groupName = $groupRow.data('group');
+          $groupRow.removeClass('collapsed');
+          $groupRow.find('.toggle-icon').css('transform', 'rotate(0deg)');
           
-          $('#stopPlayer').on('click', stopPlayer);
-          
-          // Audio player controls
-          $('#playPauseBtn').on('click', togglePlayPause);
-          $('#prevBtn').on('click', playPreviousChant);
-          $('#nextBtn').on('click', playNextChant);
-          
-          // Progress bar click to seek
-          $('.progress-bar').on('click', function(e) {
-            if (!audioPlayer.src) return;
-            
-            const clickX = e.offsetX;
-            const width = $(this).width();
-            const percent = clickX / width;
-            audioPlayer.currentTime = percent * audioPlayer.duration;
-          });
-
-          // Download Playlist
-          $('#downloadPlaylistBtn').on('click', function() {
-            if (playlist.length === 0) {
-              alert("Playlist is empty");
-              return;
+          let $next = $groupRow.next();
+          while ($next.length && !$next.hasClass('group')) {
+            if ($next.data('category') === groupName) {
+              $next.show();
             }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlist));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "my_chant_playlist.json");
-            document.body.appendChild(downloadAnchorNode); // required for firefox
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-          });
-
-          // Load Playlist Trigger
-          $('#loadPlaylistBtn').on('click', function() {
-            $('#playlistFileInput').click();
-          });
-
-          // Handle File Selection
-          $('#playlistFileInput').on('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              try {
-                const loadedPlaylist = JSON.parse(e.target.result);
-                if (Array.isArray(loadedPlaylist)) {
-                  playlist = loadedPlaylist;
-                  updatePlaylistBadge();
-                  renderPlaylist();
-                  alert("Playlist loaded successfully!");
-                } else {
-                  alert("Invalid playlist file format.");
-                }
-              } catch (err) {
-                console.error(err);
-                alert("Error parsing playlist file.");
-              }
-            };
-            reader.readAsText(file);
-            // Reset input so same file can be selected again if needed
-            $(this).val('');
-          });
+            $next = $next.next();
+          }
+        }
+        
+        // Function to collapse a group
+        function collapseGroup($groupRow) {
+          const groupName = $groupRow.data('group');
+          $groupRow.addClass('collapsed');
+          $groupRow.find('.toggle-icon').css('transform', 'rotate(-90deg)');
           
-        }).fail(function() {
-          console.error("Error loading chants.json");
-          
-          currentChants = testData;
-          
-          $('#totalCount').text(testData.length);
-          $('#groupCount').text([...new Set(testData.map(item => item.category))].length);
-          
-          const rows = testData.map((item, index) => `
-            <tr data-index="${index}" data-category="${item.category}">
-              <td>${item.chantname}</td>
-              <td style="display:none">${item.category}</td>
-              <td>
-                <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
-                  <i class="fas fa-play"></i> Play
-                </button>
-                <button class="row-add-btn" data-index="${index}" title="Add to Playlist">
-                  <i class="fas fa-plus"></i>
-                </button>
-              </td>
-            </tr>
-          `).join("");
-          $("#myTable tbody").html(rows);
-          
-          // Same DataTable initialization with fallback
-          const table = $('#myTable').DataTable({
-            responsive: true,
-            order: [[1, 'asc'], [0, 'asc']],
-            columnDefs: [
-              { targets: [1], visible: false, searchable: true },
-              { targets: [2], orderable: false }
-            ],
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            pageLength: 25,
-            language: {
-              search: "🔍 Search chants:",
-              lengthMenu: "Show _MENU_ chants"
-            },
-            rowGroup: {
-              dataSrc: 1,
-              startRender: function(rows, group) {
-                const count = rows.count();
-                return $('<tr/>')
-                  .addClass('group')
-                  .attr('data-group', group)
-                  .css({
-                    'background': 'linear-gradient(to right, #4a6fa5, #5a7ab5)',
-                    'color': 'white'
-                  })
-                  .append(
-                    $('<td/>')
-                      .attr('colspan', 3)
-                      .css({
-                        'color': 'white',
-                        'font-weight': '600',
-                        'padding': '16px 12px'
-                      })
-                      .html(
-                        `<span class="toggle-icon">▼</span>
-                         <strong>${group}</strong> 
-                         <span style="float:right; opacity:0.9">${count} chants</span>`
-                      )
-                  );
-              }
-            },
-            drawCallback: function() {
-              $('tr.group').each(function() {
-                collapseGroup($(this));
-              });
+          let $next = $groupRow.next();
+          while ($next.length && !$next.hasClass('group')) {
+            if ($next.data('category') === groupName) {
+              $next.hide();
             }
-          });
-          
-          // Same event handlers for fallback
+            $next = $next.next();
+          }
+        }
+        
+    // Play button click in table
           $('#myTable tbody').on('click', '.row-play-btn', function(e) {
             e.stopPropagation();
             const index = $(this).data('index');
-            const chantData = JSON.parse($(this).data('chant').replace(/&apos;/g, "'"));
+            const chantData = currentChants[index];
             playChant(chantData, index);
           });
 
+          // Add to Playlist button click
           $('#myTable tbody').on('click', '.row-add-btn', function(e) {
             e.stopPropagation();
             const index = $(this).data('index');
-            const chantData = currentChants[index]; // Fallback uses same array structure
+            const chantData = currentChants[index];
             addToPlaylist(chantData);
           });
+        
+        // Row click (for selection)
+        $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
+          if (!$(e.target).closest('.row-play-btn').length) {
+            const index = $(this).data('index');
+            const chantData = currentChants[index];
+            if (chantData) {
+              playChant(chantData, index);
+            }
+          }
+        });
+        
+        // Group header click
+        $('#myTable').on('click', 'tr.group', function(e) {
+          e.stopPropagation();
+          const $groupRow = $(this);
+          if ($groupRow.hasClass('collapsed')) {
+            expandGroup($groupRow);
+          } else {
+            collapseGroup($groupRow);
+          }
+        });
+        
+        // Control buttons
+        $('#expandAll').on('click', function() {
+          $('tr.group').each(function() {
+            expandGroup($(this));
+          });
+        });
+        
+        $('#collapseAll').on('click', function() {
+          $('tr.group').each(function() {
+            collapseGroup($(this));
+          });
+        });
+        
+        $('#stopPlayer').on('click', stopPlayer);
+        
+        // Audio player controls
+        $('#playPauseBtn').on('click', togglePlayPause);
+        $('#prevBtn').on('click', playPreviousChant);
+        $('#nextBtn').on('click', playNextChant);
+        
+        // Progress bar click to seek
+        $('.progress-bar').on('click', function(e) {
+          if (!audioPlayer.src) return;
           
-          $('#myTable tbody').on('click', 'tr:not(.group)', function(e) {
-            if (!$(e.target).closest('.row-play-btn').length) {
-              const index = $(this).data('index');
-              const chantData = currentChants[index];
-              if (chantData) {
-                playChant(chantData, index);
+          const clickX = e.offsetX;
+          const width = $(this).width();
+          const percent = clickX / width;
+          audioPlayer.currentTime = percent * audioPlayer.duration;
+        });
+
+        // Download Playlist
+        $('#downloadPlaylistBtn').on('click', function() {
+          if (playlist.length === 0) {
+            alert("Playlist is empty");
+            return;
+          }
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlist));
+          const downloadAnchorNode = document.createElement('a');
+          downloadAnchorNode.setAttribute("href", dataStr);
+          downloadAnchorNode.setAttribute("download", "my_chant_playlist.json");
+          document.body.appendChild(downloadAnchorNode); // required for firefox
+          downloadAnchorNode.click();
+          downloadAnchorNode.remove();
+        });
+
+        // Load Playlist Trigger
+        $('#loadPlaylistBtn').on('click', function() {
+          $('#playlistFileInput').click();
+        });
+
+        // Handle File Selection
+        $('#playlistFileInput').on('change', function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const loadedPlaylist = JSON.parse(e.target.result);
+              if (Array.isArray(loadedPlaylist)) {
+                playlist = loadedPlaylist;
+                updatePlaylistBadge();
+                renderPlaylist();
+                alert("Playlist loaded successfully!");
+              } else {
+                alert("Invalid playlist file format.");
               }
+            } catch (err) {
+              console.error(err);
+              alert("Error parsing playlist file.");
             }
-          });
-          
-          $('#myTable').on('click', 'tr.group', function(e) {
-            e.stopPropagation();
-            const $groupRow = $(this);
-            if ($groupRow.hasClass('collapsed')) {
-              expandGroup($(this));
-            } else {
-              collapseGroup($(this));
-            }
-          });
-          
-          $('#expandAll').on('click', function() {
-            $('tr.group').each(function() {
-              expandGroup($(this));
-            });
-          });
-          
-          $('#collapseAll').on('click', function() {
-            $('tr.group').each(function() {
-              collapseGroup($(this));
-            });
-          });
-          
-          $('#stopPlayer').on('click', stopPlayer);
-          $('#playPauseBtn').on('click', togglePlayPause);
-          $('#prevBtn').on('click', playPreviousChant);
-          $('#nextBtn').on('click', playNextChant);
-          
-          $('.progress-bar').on('click', function(e) {
-            if (!audioPlayer.src) return;
-            
-            const clickX = e.offsetX;
-            const width = $(this).width();
-            const percent = clickX / width;
-            audioPlayer.currentTime = percent * audioPlayer.duration;
-          });
+          };
+          reader.readAsText(file);
+          // Reset input so same file can be selected again if needed
+          $(this).val('');
         });
         
         // Define global functions for fallback
