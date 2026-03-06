@@ -416,5 +416,85 @@
   </div>
 </div>
 
+<!-- Load Data -->
+<script src="chants.data.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const data = chantsData;
+    
+    // 1. Calculate Stats
+    const totalChants = data.length;
+    const categories = new Set(data.map(c => c.category));
+    const sources = new Set(data.map(c => c.likelyRecordingSource));
+    const narayaneeyamCount = data.filter(c => c.chantname.toLowerCase().includes('narayaneeyam')).length;
+
+    document.getElementById('totalChants').textContent = totalChants;
+    document.getElementById('totalCategories').textContent = categories.size;
+    document.getElementById('totalSources').textContent = sources.size;
+    document.getElementById('narayaneeyamCount').textContent = narayaneeyamCount;
+
+    // 2. Group Data by Category
+    const grouped = {};
+    data.forEach(item => {
+      if (!grouped[item.category]) {
+        grouped[item.category] = [];
+      }
+      grouped[item.category].push(item);
+    });
+
+    // 3. Populate Table
+    const tbody = document.querySelector('#attrTable tbody');
+    
+    // Sort categories alphabetically
+    const sortedCategories = Object.keys(grouped).sort();
+
+    sortedCategories.forEach(cat => {
+      const items = grouped[cat];
+      const count = items.length;
+      
+      // Determine if we can summarize or need to list individually
+      // For brevity, if all items in category have same origin/source/status, we summarize.
+      // Otherwise we list "Mixed" or list details.
+      
+      const origins = [...new Set(items.map(i => i.textualOrigin))];
+      const recSources = [...new Set(items.map(i => i.likelyRecordingSource))];
+      const statuses = [...new Set(items.map(i => i.copyrightStatus))];
+
+      let originText = origins.length === 1 ? origins[0] : "Mixed origins (see individual chants)";
+      let sourceText = recSources.length === 1 ? recSources[0] : "Mixed sources";
+      
+      // Status Pill Logic
+      let statusHtml = '';
+      if (statuses.length === 1) {
+        const status = statuses[0];
+        let pillClass = 'status-verify';
+        if (status.toLowerCase().includes('ssrf')) pillClass = 'status-ssrf';
+        statusHtml = `<span class="status-pill ${pillClass}">${status}</span>`;
+      } else {
+        statusHtml = `<span class="status-pill status-verify">Mixed — Verify</span>`;
+      }
+
+      // Chant Names List (truncated if too long)
+      let chantNames = items.map(i => i.chantname).join(', ');
+      if (chantNames.length > 100) {
+        chantNames = chantNames.substring(0, 100) + '...';
+      }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="category-badge">${cat}</span></td>
+        <td>
+          <div style="font-weight:500; font-size:0.9rem; margin-bottom:4px;">${count} chants</div>
+          <div style="font-size:0.8rem; color:#666; line-height:1.4;">${chantNames}</div>
+        </td>
+        <td>${originText}</td>
+        <td>${sourceText}</td>
+        <td>${statusHtml}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+</script>
+
 </body>
 </html>
