@@ -774,6 +774,7 @@
             <a href="https://github.com/lavanyadeepak/lavanyadeepak.github.io/issues" target="_blank" style="color: #4a6fa5;">
               contact the maintainer
             </a> for immediate removal.
+            For a detailed list of sources and copyright information, please see the <a href="attribution.html" style="color: #4a6fa5;">attribution page</a>.
           </div>
           
           <div style="margin-top: 12px; color: #777; font-size: 0.8rem;">
@@ -805,9 +806,6 @@
         let playlist = [];
         let isPlaylistMode = false;
         let currentPlaylistIndex = -1;
-
-        // Track which chants have already shown the error (avoid spam)
-        const shownErrorFor = new Set();
 
         // Initialize audio player
         function initAudioPlayer() {
@@ -856,6 +854,20 @@
           
           // Handle audio end
             audioPlayer.addEventListener('ended', function() {
+              // Handle fallback audio completion
+              if (audioPlayer.src.includes("error/error_fallback.mp3")) {
+                // If fallback finishes, we don't want to loop it.
+                // If in playlist mode, move to next.
+                // If repeat-all, move to next.
+                // Otherwise (repeat-one, n-times, none), just stop to avoid infinite error loops.
+                if (isPlaylistMode || repeatMode === 'all') {
+                  playNextChant(repeatMode === 'all');
+                } else {
+                  stopPlayer();
+                }
+                return;
+              }
+
               isPlaying = false;
               $('#playIcon').removeClass('fa-pause').addClass('fa-play');
               $('.row-play-btn.playing').removeClass('playing');
@@ -955,16 +967,16 @@
 
           // Handle load error
           audioPlayer.onerror = () => {
-            // Only show modal once per chant
-            if (!shownErrorFor.has(chantData.chantname)) {
-              shownErrorFor.add(chantData.chantname);
-              $('#copyrightModal').addClass('active');
+            // Prevent infinite loop if fallback itself fails
+            if (audioPlayer.src.includes("error/error_fallback.mp3")) {
+              console.error("Fallback audio failed to load.");
+              stopPlayer();
+              return;
             }
 
-            // Fallback UI: show paused state
-            isPlaying = false;
-            $('#playIcon').removeClass('fa-pause').addClass('fa-play');
-            $('.row-play-btn.playing').removeClass('playing');
+            console.warn("Chant audio missing or error, playing fallback.");
+            audioPlayer.src = "chants/error/error_fallback.mp3";
+            audioPlayer.play().catch(e => console.error("Error playing fallback:", e));
           };
 
           // Attempt to play
