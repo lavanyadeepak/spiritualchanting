@@ -633,7 +633,7 @@
           <p>To experience the full chant:</p>
           <ul style="padding-left: 20px; margin: 10px 0;">
             <li>Obtain the original audio files legally (e.g., from official sources or your personal collection).</li>
-            <li>Place them in a local folder and update the <code>chants.json</code> file with correct local paths.</li>
+            <li>Place them in a local folder  <code>./chants/data/</code> and update the <code>chants.data.js</code> file in pertinent values for the attributes.</li>
             <li>Or host them yourself and update the URLs accordingly.</li>
           </ul>
           <p>For guidance on required files, naming conventions, or local hosting instructions, please contact the maintainer.</p>
@@ -785,7 +785,7 @@
 
     <!-- Bundled JS -->
     <script src="assets/js/bundle.js"></script>
-    <script src="chants.data.js"></script>
+    <script src="chants/data/chants.data.js"></script>
     <script>
       $(document).ready(function() {
         pseudoStart();
@@ -1288,7 +1288,10 @@
         // Build table rows
         const rows = data.map((item, index) => `
           <tr data-index="${index}" data-category="${item.category}">
-            <td>${item.chantname}</td>
+            <td data-order="${item.chantname}">
+              <div style="font-weight: 500;">${item.chantname}</div>
+              <div style="font-size: 0.85em; color: #666; margin-top: 2px;">${item.textualOrigin || ''}</div>
+            </td>
             <td style="display:none">${item.category}</td>
             <td>
               <button class="row-play-btn" data-index="${index}" data-chant='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
