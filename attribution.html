@@ -231,26 +231,26 @@
 
     <div class="summary-grid">
       <div class="summary-card">
-        <span class="number">168</span>
+        <span class="number" id="totalChants">0</span>
         <span class="label">Total Chants</span>
       </div>
       <div class="summary-card">
-        <span class="number">20</span>
+        <span class="number" id="totalCategories">0</span>
         <span class="label">Categories</span>
       </div>
       <div class="summary-card">
-        <span class="number">3</span>
+        <span class="number" id="totalSources">0</span>
         <span class="label">Source Types</span>
       </div>
       <div class="summary-card">
-        <span class="number">100</span>
+        <span class="number" id="narayaneeyamCount">0</span>
         <span class="label">Narayaneeyam<br><span style="font-size:0.7em">Dasakams</span></span>
       </div>
     </div>
 
     <div class="section-title">Source Attribution by Category</div>
 
-    <table class="attr-table">
+    <table class="attr-table" id="attrTable">
       <thead>
         <tr>
           <th>Category / Deity</th>
@@ -261,151 +261,6 @@
         </tr>
       </thead>
       <tbody>
-
-        <tr>
-          <td><span class="category-badge">Andal</span></td>
-          <td>Thiruppavai 01–30 <span class="chant-count">(30 chants)</span></td>
-          <td>Composed by Andal (~8th century CE), Alvar saint. Tamil Vaishnava devotional hymns. Part of Nalayira Divya Prabandham.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Vishnu</span></td>
-          <td>Narayaneeyam 001–100 <span class="chant-count">(100 chants)</span></td>
-          <td>Composed by Melpathur Narayana Bhattathiri (~16th century CE) at Guruvayur Temple. 100 Dasakams summarising Bhagavata Purana.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Vishnu</span></td>
-          <td>Sri Vishnu Core, Dhyanam, Phalasruthi, Ashwini, Swathi, Uthirattadhi; Sudarshana Ashtakam; Om Namo Bhagavate Vasudevaya; Om Namo Venkatesaya <span class="chant-count">(9 chants)</span></td>
-          <td>Traditional Vaishnava stotras and Ashtottarams; ancient Sanskrit texts in public domain.</td>
-          <td>Mixed — some likely SSRF; verify others</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Beej Mantras</span></td>
-          <td>Om, Aim, Gam, Ham, Hraam, Hrim, Hroum, Hrum, Klim, Sham, Dvayam <span class="chant-count">(11 chants)</span></td>
-          <td>Primordial seed (Beej) mantras from Tantric and Vedic tradition. Ancient, no individual author.</td>
-          <td>SSRF (Spiritual Science Research Foundation) — folder path <code>./chants/ssrf/</code></td>
-          <td><span class="status-pill status-ssrf">SSRF — Verify Terms</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Shiva</span></td>
-          <td>Sivapuranam, Rudram Chamakam, Triambakam, Om Namah Shivaya <span class="chant-count">(4 chants)</span></td>
-          <td>Sivapuranam by Manikkavasagar (~9th century CE); Rudram from Krishna Yajurveda; Triambakam (Mahamrityunjaya) from Rigveda. All ancient public domain texts.</td>
-          <td>Mixed — SSRF for Om Namah Shivaya; others unknown. SVBC (Sri Venkateswara Bhakti Channel) likely source for Rudram.</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Narasimha</span></td>
-          <td>Kaamaasikaashtakam, Karavalambam, Sahasranamam, Sri Lakshmi Narasimha Infection Control, Ugramveeram <span class="chant-count">(5 chants)</span></td>
-          <td>Traditional Vaishnava stotras in Sanskrit. Ancient public domain texts.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Lakshmi</span></td>
-          <td>Kanakadhara Stotram, Lakshmyashtottaram <span class="chant-count">(2 chants)</span></td>
-          <td>Kanakadhara Stotram by Adi Shankaracharya (~8th century CE); Ashtottaram is traditional. Both public domain.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Hanuman</span></td>
-          <td>Hanuman Chaleesa, Hanuman Mantra, Hanumate <span class="chant-count">(3 chants)</span></td>
-          <td>Hanuman Chalisa composed by Tulsidas (~16th century CE). Mantra is traditional. Both public domain.</td>
-          <td>Hanumate from SSRF; others unknown — verify</td>
-          <td><span class="status-pill status-ssrf">Mixed — Verify</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Murugan</span></td>
-          <td>Kandaranubooti, Kandashastikavacham <span class="chant-count">(2 chants)</span></td>
-          <td>Both Tamil compositions by Arunagirinathar (~15th century CE). Public domain texts.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Gayatri</span></td>
-          <td>Gayatri Mantra <span class="chant-count">(1 chant)</span></td>
-          <td>From Rigveda (Mandala 3.62.10). Among the oldest known mantras. Entirely public domain.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Amman</span></td>
-          <td>Samayapuram <span class="chant-count">(1 chant)</span></td>
-          <td>Devotional hymn to Samayapuram Mariamman. Traditional Tamil composition.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Parvathy</span></td>
-          <td>Annapoorna Stotram, Mylai Karpagam, Durga Devi Yainamaha Om Namah Shivaya <span class="chant-count">(3 chants)</span></td>
-          <td>Annapoorna Stotram by Adi Shankaracharya; Mylai Karpagam is a Tamil devotional composition; Durga Devi from SSRF collection.</td>
-          <td>Durga Devi from SSRF; others unknown — verify</td>
-          <td><span class="status-pill status-ssrf">Mixed — Verify</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Surya</span></td>
-          <td>Aadityahrudayam, Aadityahrudayam Core, Dhyanam, Phala <span class="chant-count">(4 chants)</span></td>
-          <td>From Valmiki Ramayana (Yuddha Kanda). Ancient public domain text.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Shani</span></td>
-          <td>Dasharatha Stotram, Neelanchana, Om Sham <span class="chant-count">(3 chants)</span></td>
-          <td>Navagraha stotras from Puranic tradition. Om Sham from SSRF. Ancient public domain texts.</td>
-          <td>Om Sham from SSRF; others unknown</td>
-          <td><span class="status-pill status-ssrf">Mixed — Verify</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Ganapathi</span></td>
-          <td>Ganeshaya Namaha, Shuklam <span class="chant-count">(2 chants)</span></td>
-          <td>Ganeshaya Namaha from SSRF; Shuklam (Ganapathi Prarthana) is a traditional Vedic prayer.</td>
-          <td>SSRF for Ganeshaya Namaha; Shuklam unknown</td>
-          <td><span class="status-pill status-ssrf">Mixed — Verify</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Rama</span></td>
-          <td>Shree Ram <span class="chant-count">(1 chant)</span></td>
-          <td>Traditional Rama Nama chanting. From SSRF collection.</td>
-          <td>SSRF (Spiritual Science Research Foundation)</td>
-          <td><span class="status-pill status-ssrf">SSRF — Verify Terms</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Dattatreya</span></td>
-          <td>Sri Datta <span class="chant-count">(1 chant)</span></td>
-          <td>Devotional chant to Lord Dattatreya. From SSRF collection.</td>
-          <td>SSRF (Spiritual Science Research Foundation)</td>
-          <td><span class="status-pill status-ssrf">SSRF — Verify Terms</span></td>
-        </tr>
-
-        <tr>
-          <td><span class="category-badge">Varuna</span></td>
-          <td>Varuna <span class="chant-count">(1 chant)</span></td>
-          <td>Vedic hymn to Varuna, deity of water and cosmic order. From Rigveda. Ancient public domain text.</td>
-          <td>Recording artist/publisher unknown — verify before distribution</td>
-          <td><span class="status-pill status-verify">Verify Recording</span></td>
-        </tr>
-
       </tbody>
     </table>
 
