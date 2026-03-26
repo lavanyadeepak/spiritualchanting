@@ -1,4 +1,4 @@
-var chantsData = [
+[
   {
     "chantname": "Samayapuram",
     "chanturl": "https://audio.jukehost.co.uk/c08Y9BVNVypRbYFYpyaaFQ0yJ5waFGn0",
@@ -1463,4 +1463,4 @@ var chantsData = [
     "likelyRecordingSource": "Recording artist/publisher unknown — verify before distribution",
     "copyrightStatus": "Verify Recording"
   }
-];
+]
