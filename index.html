@@ -41,6 +41,11 @@
       </div>
     </div>
 
+    <!-- Autoplay Blocked Banner -->
+    <div id="autostartBanner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#ffd166; color:#333; padding:12px 20px; text-align:center; font-size:0.9rem; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer;">
+      <i class="fas fa-play-circle"></i> Your saved playlist is ready — tap anywhere on this banner to resume playback (browsers block audio autoplay until you interact with the page).
+    </div>
+
     <!-- Playlist Modal -->
     <div class="modal" id="playlistModal">
       <div class="modal-content" style="width: 600px;">
@@ -54,11 +59,15 @@
           </div>
           <ul id="playlistItems" style="list-style:none; padding:0; max-height: 400px; overflow-y:auto;"></ul>
         </div>
-        <div class="modal-footer" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-          <div style="display:flex; gap:5px;">
+        <div class="modal-footer" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; align-items:center;">
+          <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
             <button id="downloadPlaylistBtn" class="modal-btn" style="background:#17a2b8; font-size:0.9rem;" title="Save to File"><i class="fas fa-download"></i> Save</button>
             <button id="loadPlaylistBtn" class="modal-btn" style="background:#17a2b8; font-size:0.9rem;" title="Load from File"><i class="fas fa-upload"></i> Load</button>
             <input type="file" id="playlistFileInput" accept=".json" style="display:none">
+            <div style="display:flex; align-items:center; gap:5px; margin-left:8px;">
+              <input type="checkbox" id="autostartCb">
+              <label for="autostartCb" style="cursor:pointer; font-size:0.85rem;">Auto-play on load</label>
+            </div>
           </div>
           <div style="display:flex; gap:5px;">
             <button id="clearPlaylistBtn" class="modal-btn" style="background:#dc3545; font-size:0.9rem;">Clear</button>
@@ -203,6 +212,87 @@
         let playlist = [];
         let isPlaylistMode = false;
         let currentPlaylistIndex = -1;
+
+        // --- localStorage keys ---
+        const PLAYLIST_STORAGE_KEY = 'chantingUtility_playlist';
+        const AUTOSTART_STORAGE_KEY = 'chantingUtility_autostart';
+
+        // --- localStorage helpers ---
+        function savePlaylistToStorage() {
+          try {
+            localStorage.setItem(PLAYLIST_STORAGE_KEY, JSON.stringify(playlist));
+          } catch (e) {
+            console.error("Failed to save playlist to localStorage:", e);
+          }
+        }
+
+        function loadPlaylistFromStorage() {
+          try {
+            const stored = localStorage.getItem(PLAYLIST_STORAGE_KEY);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                playlist = parsed;
+              }
+            }
+          } catch (e) {
+            console.error("Failed to load playlist from localStorage:", e);
+          }
+        }
+
+        function loadAutostartPref() {
+          const saved = localStorage.getItem(AUTOSTART_STORAGE_KEY);
+          $('#autostartCb').prop('checked', saved === 'true');
+        }
+
+        function saveAutostartPref(checked) {
+          try {
+            localStorage.setItem(AUTOSTART_STORAGE_KEY, checked);
+          } catch (e) {
+            console.error("Failed to save autostart preference:", e);
+          }
+        }
+
+        // Attempt autoplay; if blocked by the browser, show a banner
+        // that starts playback on the user's first interaction.
+        function attemptAutostart() {
+          if (playlist.length === 0) return;
+
+          isPlaylistMode = true;
+          currentPlaylistIndex = 0;
+          const item = playlist[0];
+
+          let tableIndex = -1;
+          for (let i = 0; i < currentChants.length; i++) {
+            if (currentChants[i].chantname === item.chantname && currentChants[i].category === item.category) {
+              tableIndex = i;
+              break;
+            }
+          }
+
+          // Try silently; playChant() already swallows autoplay rejection.
+          playChant(item, tableIndex, true);
+          renderPlaylist();
+
+          // If it didn't actually start (autoplay blocked), show the resume banner.
+          setTimeout(function() {
+            if (!isPlaying) {
+              $('#autostartBanner').show();
+            }
+          }, 400);
+        }
+
+        $('#autostartBanner').on('click', function() {
+          $(this).hide();
+          if (isPlaylistMode && currentPlaylistIndex >= 0) {
+            audioPlayer.play().then(function() {
+              isPlaying = true;
+              $('#playIcon').removeClass('fa-play').addClass('fa-pause');
+            }).catch(function(e) {
+              console.warn("Resume play failed:", e);
+            });
+          }
+        });
 
         // Initialize audio player
         function initAudioPlayer() {
@@ -547,6 +637,7 @@
           item.repeatCount = count;
           playlist.push(item);
           updatePlaylistBadge();
+          savePlaylistToStorage();
           // Optional: Visual feedback
           const btn = $(`button.row-add-btn[data-chant*="${chantData.chantname}"]`); // Simple selector attempt
           // Since selector might be complex with JSON, just rely on badge update or toast
@@ -604,6 +695,7 @@
             if (currentPlaylistIndex === index) currentPlaylistIndex++;
             else if (currentPlaylistIndex === index + 1) currentPlaylistIndex--;
           }
+          savePlaylistToStorage();
           renderPlaylist();
         };
 
@@ -616,6 +708,7 @@
             // If we want to stop: stopPlayer();
           }
           updatePlaylistBadge();
+          savePlaylistToStorage();
           renderPlaylist();
         };
 
@@ -655,6 +748,7 @@
             playlist = [];
             currentPlaylistIndex = -1;
             updatePlaylistBadge();
+            savePlaylistToStorage();
             renderPlaylist();
             if(isPlaylistMode) stopPlayer();
           }
@@ -669,6 +763,11 @@
           }
         }
       );
+
+        // Autostart checkbox toggle
+        $('#autostartCb').on('change', function() {
+          saveAutostartPref($(this).is(':checked'));
+        });
         
         // Initialize audio player
         initAudioPlayer();
@@ -894,9 +993,10 @@
             try {
               const loadedPlaylist = JSON.parse(e.target.result);
               if (Array.isArray(loadedPlaylist)) {
-                playlist = loadedPlaylist;
+                playlist = loadedPlaylist; // Overwrites any previously stored playlist
                 updatePlaylistBadge();
                 renderPlaylist();
+                savePlaylistToStorage(); // Persist the newly loaded playlist, replacing the old one
                 alert("Playlist loaded successfully!");
               } else {
                 alert("Invalid playlist file format.");
@@ -910,6 +1010,15 @@
           // Reset input so same file can be selected again if needed
           $(this).val('');
         });
+
+        // --- Restore persisted playlist & autostart preference on page load ---
+        loadPlaylistFromStorage();
+        updatePlaylistBadge();
+        loadAutostartPref();
+
+        if ($('#autostartCb').is(':checked') && playlist.length > 0) {
+          attemptAutostart();
+        }
         
         // Define global functions for fallback
         function expandGroup($groupRow) {
