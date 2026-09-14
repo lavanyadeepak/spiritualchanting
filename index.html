@@ -18,6 +18,9 @@
   </head>
   <body>
 
+    <!-- Toast notifications (non-intrusive, top-right, auto-dismiss) -->
+    <div id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
     <!-- Copyright/Modal Dialog -->
     <div class="modal" id="copyrightModal">
       <div class="modal-content">
@@ -251,6 +254,51 @@
           } catch (e) {
             console.error("Failed to save autostart preference:", e);
           }
+        }
+
+        // --- Toast notifications (non-intrusive, top-right, auto-dismiss) ---
+        // type: 'success' | 'error' | 'info', duration in ms (default 3000)
+        function showToast(message, type = 'info', duration = 3000) {
+          const icons = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-circle',
+            info: 'fas fa-info-circle'
+          };
+          const $toast = $('<div/>', {
+            class: 'toast toast-' + type,
+            role: type === 'error' ? 'alert' : 'status'
+          });
+          $toast.append($('<i/>', { class: icons[type] || icons.info }));
+          $toast.append($('<span/>').text(message));
+          const $close = $('<button/>', {
+            class: 'toast-close',
+            'aria-label': 'Dismiss notification',
+            html: '&times;'
+          });
+          $close.on('click', function() { dismissToast($toast); });
+          $toast.append($close);
+          $('#toastContainer').append($toast);
+          // Animate in
+          requestAnimationFrame(function() {
+            $toast.addClass('show');
+          });
+          // Pause auto-dismiss on hover for readability
+          let remaining = duration;
+          let startTime = Date.now();
+          let timerId = setTimeout(function() { dismissToast($toast); }, remaining);
+          $toast.on('mouseenter', function() {
+            clearTimeout(timerId);
+            remaining -= (Date.now() - startTime);
+          }).on('mouseleave', function() {
+            startTime = Date.now();
+            timerId = setTimeout(function() { dismissToast($toast); }, Math.max(remaining, 500));
+          });
+        }
+
+        function dismissToast($toast) {
+          if (!$toast || !$toast.length || $toast.hasClass('hide')) return;
+          $toast.removeClass('show').addClass('hide');
+          setTimeout(function() { $toast.remove(); }, 350);
         }
 
         // Attempt autoplay; if blocked by the browser, show a banner
@@ -759,7 +807,7 @@
             playPlaylistTrack(0);
             $('#playlistModal').removeClass('active');
           } else {
-            alert("Playlist is empty!");
+            showToast("Playlist is empty!", "info");
           }
         }
       );
@@ -967,7 +1015,7 @@
         // Download Playlist
         $('#downloadPlaylistBtn').on('click', function() {
           if (playlist.length === 0) {
-            alert("Playlist is empty");
+            showToast("Playlist is empty", "info");
             return;
           }
           const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlist));
@@ -997,13 +1045,13 @@
                 updatePlaylistBadge();
                 renderPlaylist();
                 savePlaylistToStorage(); // Persist the newly loaded playlist, replacing the old one
-                alert("Playlist loaded successfully!");
+                showToast("Playlist loaded successfully!", "success");
               } else {
-                alert("Invalid playlist file format.");
+                showToast("Invalid playlist file format.", "error");
               }
             } catch (err) {
               console.error(err);
-              alert("Error parsing playlist file.");
+              showToast("Error parsing playlist file.", "error");
             }
           };
           reader.readAsText(file);
